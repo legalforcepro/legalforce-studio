@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LegalForce Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & ROOT ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0a0a0f;--paper:#f5f3ee;--cream:#ede9e0;
+  --v:#5b4fff;--v2:#7c6fff;--v-dim:rgba(91,79,255,0.12);
+  --r:#ff3b3b;--g:#00c896;--gld:#f5a623;
+  --border:rgba(10,10,15,0.1);--border-strong:rgba(10,10,15,0.2);
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+  --ff:'Bricolage Grotesque',sans-serif;
+  --mono:'DM Mono',monospace;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
+  --nav-h:56px;
+}
+
+html{height:100%;scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--ff);font-size:15px;line-height:1.5;
+  min-height:100%;display:flex;flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== GRAIN OVERLAY ===== */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.4;
+}
+
+/* ===== HEADER ===== */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(245,243,238,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  height:var(--nav-h);display:flex;align-items:center;
+  padding:0 20px;gap:12px;flex-shrink:0;
+}
+.header-logo{
+  font-weight:800;font-size:17px;letter-spacing:-0.5px;
+  display:flex;align-items:center;gap:6px;flex:1;
+}
+.header-logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--r);display:inline-block;flex-shrink:0;
+}
+.header-badge{
+  font-size:9px;font-weight:700;font-family:var(--mono);
+  letter-spacing:.8px;text-transform:uppercase;
+  background:var(--v-dim);color:var(--v);
+  padding:3px 8px;border-radius:20px;border:1px solid rgba(91,79,255,0.2);
+}
+.header-actions{display:flex;gap:8px;align-items:center}
+.hbtn{
+  background:transparent;border:1px solid var(--border-strong);
+  border-radius:var(--r8);padding:6px 12px;font-size:12px;font-weight:600;
+  font-family:var(--ff);cursor:pointer;color:var(--ink);transition:all .15s;
+}
+.hbtn:hover{background:var(--ink);color:var(--paper)}
+.hbtn-v{background:var(--v);color:#fff;border-color:var(--v)}
+.hbtn-v:hover{background:#4a3fe0}
+
+/* ===== LAYOUT ===== */
+.app{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--nav-h))}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:64px;background:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+  padding:12px 0;gap:4px;flex-shrink:0;
+  overflow:hidden;
+}
+.sidebar-item{
+  width:44px;height:44px;border-radius:var(--r12);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;border:none;background:transparent;
+  color:rgba(255,255,255,0.35);transition:all .2s;position:relative;
+}
+.sidebar-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7)}
+.sidebar-item.on{background:var(--v);color:#fff}
+.sidebar-item svg{width:18px;height:18px;flex-shrink:0}
+.sidebar-label{font-size:8px;font-weight:600;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase}
+.sidebar-divider{width:32px;height:1px;background:rgba(255,255,255,0.08);margin:4px 0;flex-shrink:0}
+.sidebar-dot{
+  position:absolute;top:6px;right:6px;width:6px;height:6px;
+  border-radius:50%;background:var(--r);border:1.5px solid var(--ink);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page{display:none;animation:pageIn .25s ease}
+.page.on{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== SECTIONS ===== */
+.section{padding:24px 20px}
+.section+.section{border-top:1px solid var(--border)}
+
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.page-title span{color:var(--v)}
+.page-sub{font-size:13px;color:rgba(10,10,15,0.5);margin-bottom:20px;line-height:1.5}
+
+/* ===== CARDS ===== */
+.card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--r16);padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.card-title{font-size:12px;font-weight:700;font-family:var(--mono);letter-spacing:.6px;text-transform:uppercase;color:rgba(10,10,15,0.4);margin-bottom:12px}
+.card-title-large{font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}
+
+/* ===== FORM ELEMENTS ===== */
+.lbl{
+  display:block;font-size:11px;font-weight:700;font-family:var(--mono);
+  letter-spacing:.5px;text-transform:uppercase;color:rgba(10,10,15,0.4);
+  margin-bottom:6px;margin-top:14px;
+}
+.lbl:first-child{margin-top:0}
+
+input[type=text],textarea,select{
+  width:100%;background:var(--paper);
+  border:1.5px solid var(--border);border-radius:var(--r12);
+  color:var(--ink);font-family:var(--ff);font-size:14px;
+  padding:10px 13px;outline:none;transition:border-color .15s;
+  appearance:none;-webkit-appearance:none;
+}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--v);background:#fff}
+textarea{min-height:80px;resize:none;line-height:1.55}
+select{background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%230a0a0f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+
+/* ===== PILLS ===== */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pill{
+  padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--border);background:#fff;
+  color:rgba(10,10,15,0.55);transition:all .15s;font-family:var(--ff);
+}
+.pill:hover{border-color:var(--ink);color:var(--ink)}
+.pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pill-v.on{background:var(--v);border-color:var(--v);color:#fff}
+.pill-g.on{background:var(--g);border-color:var(--g);color:#fff}
+.pill-r.on{background:var(--r);border-color:var(--r);color:#fff}
+
+/* ===== BUTTONS ===== */
+.btn{
+  width:100%;background:var(--ink);color:var(--paper);
+  border:none;border-radius:var(--r12);font-family:var(--ff);
+  font-weight:700;font-size:15px;padding:14px;cursor:pointer;
+  transition:all .2s;margin-top:6px;letter-spacing:-0.2px;
+  position:relative;overflow:hidden;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.08),transparent);
+  pointer-events:none;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-v{background:var(--v)}
+.btn-v:hover{background:#4a3fe0}
+.btn-sm{
+  background:var(--paper);color:var(--ink);border:1.5px solid var(--border);
+  border-radius:var(--r8);font-family:var(--ff);font-weight:600;
+  font-size:11px;padding:6px 12px;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.btn-sm:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn-sm.ok{background:var(--g);color:#fff;border-color:var(--g)}
+.btn-sm.danger{background:var(--r);color:#fff;border-color:var(--r)}
+.btn-outline{
+  width:100%;background:transparent;color:var(--v);
+  border:1.5px solid rgba(91,79,255,0.3);
+  border-radius:var(--r12);font-family:var(--ff);font-weight:600;
+  font-size:13px;padding:11px;cursor:pointer;transition:all .15s;margin-top:8px;
+}
+.btn-outline:hover{background:var(--v-dim);border-color:var(--v)}
+
+/* ===== UPLOAD ===== */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:var(--r16);
+  padding:28px 16px;text-align:center;
+  background:var(--paper);cursor:pointer;
+  transition:all .2s;position:relative;margin-bottom:8px;
+}
+.upload-zone:hover,.upload-zone.over{border-color:var(--v);background:rgba(91,79,255,0.04)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-ico{font-size:32px;margin-bottom:8px}
+.upload-title{font-weight:700;font-size:14px;margin-bottom:3px}
+.upload-sub{font-size:12px;color:rgba(10,10,15,0.45)}
+
+/* ===== SLIDES GRID ===== */
+.slides-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.slide-item{position:relative;border-radius:10px;overflow:hidden;border:2px solid var(--border);background:var(--paper);aspect-ratio:1}
+.slide-item img{width:100%;height:100%;object-fit:cover;display:block}
+.slide-num{position:absolute;top:5px;left:5px;background:var(--v);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;font-family:var(--mono)}
+.slide-rm{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.6);border:none;border-radius:6px;color:#fff;font-size:13px;width:22px;height:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.slide-mv{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:3px}
+.slide-mv button{background:rgba(0,0,0,0.55);border:none;border-radius:5px;color:#fff;font-size:11px;width:22px;height:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ===== ALGO TIP ===== */
+.algo-tip{
+  background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);
+  border-radius:var(--r8);padding:8px 12px;font-size:11px;
+  color:#8a6200;margin-top:8px;line-height:1.6;font-family:var(--mono);
+}
+
+/* ===== OBJ EXPLAIN ===== */
+.obj-explain{
+  background:rgba(91,79,255,0.05);border-left:3px solid var(--v);
+  border-radius:0 var(--r8) var(--r8) 0;padding:8px 12px;
+  font-size:12px;color:rgba(10,10,15,0.6);margin-top:8px;line-height:1.6;
+}
+.obj-explain strong{color:var(--ink)}
+
+/* ===== RESULTS ===== */
+.result-block{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--r12);padding:14px;margin-bottom:8px;
+  transition:border-color .15s;
+}
+.result-block.hi{border-color:var(--v);border-width:2px;background:rgba(91,79,255,0.02)}
+.result-block.coherent{border-color:var(--g);background:rgba(0,200,150,0.03)}
+.result-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.result-lbl{font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.6px;text-transform:uppercase;color:var(--v)}
+.result-role{font-size:10px;color:rgba(10,10,15,0.4);margin-top:2px}
+.result-txt{font-size:13px;line-height:1.75;color:var(--ink);white-space:pre-wrap}
+.result-tip{
+  font-size:10px;font-family:var(--mono);color:#8a6200;
+  background:rgba(245,166,35,0.08);border-radius:6px;
+  padding:4px 8px;margin-top:8px;line-height:1.5;
+}
+
+/* ===== CHAR BAR ===== */
+.char-bar{margin-top:8px;padding-top:8px;border-top:1px solid rgba(10,10,15,0.06)}
+.char-info{display:flex;justify-content:space-between;font-size:10px;color:rgba(10,10,15,0.4);font-family:var(--mono);margin-bottom:4px}
+.char-track{height:3px;background:rgba(10,10,15,0.08);border-radius:2px;overflow:hidden}
+.char-fill{height:100%;border-radius:2px;transition:width .4s}
+
+/* ===== HOOK SCORE ===== */
+.hook-score{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);margin-top:8px}
+.hook-label{font-size:11px;font-family:var(--mono);color:rgba(10,10,15,0.45);min-width:72px}
+.hook-track{flex:1;height:6px;background:rgba(10,10,15,0.08);border-radius:3px;overflow:hidden}
+.hook-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.hook-val{font-size:12px;font-weight:700;font-family:var(--mono);min-width:42px;text-align:right}
+
+/* ===== SLIDE RESULT ===== */
+.slide-result{background:#fff;border:1px solid var(--border);border-radius:var(--r12);margin-bottom:8px;overflow:hidden}
+.slide-result-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;border-bottom:1px solid var(--border)}
+.slide-result-hdr:last-child{border:none}
+.slide-thumb{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--paper)}
+.slide-info{flex:1}
+.slide-title{font-weight:700;font-size:12px}
+.slide-sub{font-size:10px;color:rgba(10,10,15,0.4);font-family:var(--mono);margin-top:2px}
+.slide-body{padding:12px 14px;display:none}
+.slide-body.open{display:block}
+.slide-chevron{color:rgba(10,10,15,0.3);font-size:14px;transition:transform .2s}
+.slide-result-hdr.open .slide-chevron{transform:rotate(90deg)}
+
+/* ===== HASHTAGS ===== */
+.hashtag-box{background:var(--paper);border:1px solid var(--border);border-radius:var(--r12);padding:12px;margin-top:8px}
+.hashtag-title{font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.6px;text-transform:uppercase;color:rgba(10,10,15,0.4);margin-bottom:8px}
+.hashtag-list{display:flex;flex-wrap:wrap;gap:5px}
+.hashtag-item{font-size:11px;font-family:var(--mono);color:var(--v);background:rgba(91,79,255,0.08);border:1px solid rgba(91,79,255,0.15);border-radius:6px;padding:3px 8px;cursor:pointer;transition:all .15s}
+.hashtag-item:hover{background:var(--v);color:#fff}
+
+/* ===== RETOUCHE ===== */
+.retouche-panel{
+  margin-top:10px;background:rgba(91,79,255,0.05);
+  border:1.5px solid rgba(91,79,255,0.2);border-radius:var(--r12);padding:12px;
+}
+.retouche-lbl{font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;color:var(--v);margin-bottom:7px}
+.retouche-actions{display:flex;gap:7px;margin-top:8px}
+.retouche-badge{font-size:9px;font-weight:700;font-family:var(--mono);background:rgba(0,200,150,0.15);color:var(--g);border:1px solid rgba(0,200,150,0.25);border-radius:4px;padding:1px 6px;margin-left:6px}
+
+/* ===== SUBJECTS ===== */
+.subjects-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.subject-card{
+  background:#fff;border:1.5px solid var(--border);border-radius:var(--r12);
+  padding:12px;cursor:pointer;transition:all .15s;position:relative;
+}
+.subject-card:hover{border-color:var(--v);transform:translateY(-1px);box-shadow:var(--shadow)}
+.subject-card.sel{border-color:var(--v);border-width:2px;background:rgba(91,79,255,0.03)}
+.subject-tag{font-size:9px;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:6px;letter-spacing:.4px}
+.tag-tofu{background:rgba(91,79,255,0.1);color:var(--v)}
+.tag-mofu{background:rgba(245,166,35,0.15);color:#8a6200}
+.tag-bofu{background:rgba(0,200,150,0.1);color:#007a5e}
+.tag-mre{background:rgba(255,59,59,0.1);color:#c00}
+.subject-title{font-size:12px;font-weight:600;line-height:1.4;color:var(--ink)}
+.subject-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--v);color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center}
+.subject-card.sel .subject-check{display:flex}
+
+/* ===== CHAT ===== */
+.chat-wrap{height:calc(100vh - var(--nav-h) - 70px);display:flex;flex-direction:column}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.chat-msg{max-width:88%;padding:12px 15px;font-size:13px;line-height:1.7;border-radius:16px}
+.chat-msg.user{
+  background:var(--v);color:#fff;align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.chat-msg.ai{
+  background:#fff;color:var(--ink);align-self:flex-start;
+  border:1px solid var(--border);border-bottom-left-radius:4px;
+  box-shadow:var(--shadow);
+}
+.chat-msg.ai.loading{color:rgba(10,10,15,0.4);font-style:italic}
+.chat-input-area{
+  padding:12px 16px;background:var(--paper);
+  border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;
+}
+.chat-input-area textarea{
+  flex:1;min-height:42px;max-height:120px;border-radius:var(--r12);
+  font-size:14px;padding:10px 13px;margin:0;resize:none;background:#fff;
+}
+.chat-send{
+  background:var(--v);border:none;border-radius:var(--r12);
+  color:#fff;width:42px;height:42px;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.chat-send:hover{background:#4a3fe0;transform:scale(1.05)}
+
+/* ===== PACK SECTIONS ===== */
+.pack-sec{margin-bottom:16px}
+.pack-sec-title{
+  font-size:11px;font-weight:700;font-family:var(--mono);
+  letter-spacing:.5px;text-transform:uppercase;color:var(--gld);
+  margin-bottom:8px;display:flex;align-items:center;gap:5px;
+}
+
+/* ===== HISTORY ===== */
+.hist-item{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r12);
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;
+}
+.hist-item:hover{border-color:var(--v);box-shadow:var(--shadow)}
+.hist-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.hist-type{font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;color:var(--v)}
+.hist-date{font-size:10px;font-family:var(--mono);color:rgba(10,10,15,0.35)}
+.hist-prev{font-size:12px;color:rgba(10,10,15,0.6);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hist-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.hist-tag{font-size:9px;font-family:var(--mono);background:rgba(91,79,255,0.08);color:var(--v);border:1px solid rgba(91,79,255,0.15);border-radius:4px;padding:2px 6px}
+
+/* ===== SETTINGS ===== */
+.setting-row{padding:12px 0;border-bottom:1px solid rgba(10,10,15,0.06);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.setting-row:last-child{border:none}
+.setting-lbl{font-size:13px;font-weight:600}
+.setting-sub{font-size:11px;color:rgba(10,10,15,0.4);margin-top:2px}
+.color-pick{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;padding:2px;appearance:none;-webkit-appearance:none;background:transparent}
+
+/* ===== LOADING ===== */
+.loading{text-align:center;padding:32px 16px}
+.spin{
+  width:26px;height:26px;border:2px solid rgba(91,79,255,0.15);
+  border-top-color:var(--v);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 10px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-msg{font-size:13px;color:rgba(10,10,15,0.5);margin-bottom:4px}
+.load-sub{font-size:11px;font-family:var(--mono);color:var(--v)}
+
+/* ===== EMPTY ===== */
+.empty{text-align:center;padding:36px 16px;color:rgba(10,10,15,0.25)}
+.empty-ico{font-size:36px;margin-bottom:10px}
+.empty-txt{font-size:13px;line-height:1.6}
+
+/* ===== ERROR ===== */
+.err-box{
+  background:rgba(255,59,59,0.06);border:1.5px solid rgba(255,59,59,0.2);
+  border-radius:var(--r12);padding:14px;font-size:12px;
+  color:#c00;line-height:1.7;font-family:var(--mono);
+}
+
+/* ===== ACTU BADGE ===== */
+.actu-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);
+  color:var(--g);font-size:10px;font-weight:700;font-family:var(--mono);
+  padding:4px 10px;border-radius:20px;margin-bottom:14px;
+  letter-spacing:.4px;
+}
+.actu-dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== SELECTED SUBJECT INFO ===== */
+.sel-subject-info{
+  background:rgba(91,79,255,0.06);border:1.5px solid rgba(91,79,255,0.2);
+  border-radius:var(--r12);padding:12px;margin-top:10px;
+}
+.sel-subject-lbl{font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;color:var(--v);margin-bottom:5px}
+.sel-subject-txt{font-size:13px;font-weight:600;line-height:1.4}
+
+/* ===== BOTTOM NAV (mobile) ===== */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  background:rgba(245,243,238,0.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 4px;cursor:pointer;color:rgba(10,10,15,0.35);
+  font-size:8px;font-weight:700;font-family:var(--mono);letter-spacing:.4px;
+  text-transform:uppercase;border:none;background:transparent;
+  gap:4px;transition:color .15s;
+}
+.bnav-item svg{width:20px;height:20px}
+.bnav-item.on{color:var(--v)}
+.bnav-badge{
+  font-size:8px;font-weight:700;font-family:var(--mono);
+  background:var(--r);color:#fff;padding:1px 5px;border-radius:8px;
+}
+
+/* ===== STAT PILLS ===== */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+.stat-pill{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r12);
+  padding:12px 14px;text-align:center;box-shadow:var(--shadow);
+}
+.stat-val{font-size:22px;font-weight:800;letter-spacing:-1px;margin-bottom:2px}
+.stat-lbl{font-size:10px;font-family:var(--mono);color:rgba(10,10,15,0.4);letter-spacing:.4px;text-transform:uppercase}
+
+/* ===== DB FILE UPLOAD ===== */
+.db-file-result{margin-top:10px}
+.extracted-field{background:#fff;border:1px solid var(--border);border-radius:var(--r8);padding:10px;margin-bottom:6px}
+.ext-lbl{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;color:var(--v);margin-bottom:4px}
+.ext-val{font-size:12px;color:var(--ink);line-height:1.5}
+
+/* ===== DESKTOP ===== */
+@media(min-width:768px){
+  .sidebar{width:72px}
+  .bottom-nav{display:none}
+  .main{padding-bottom:0}
+  .section{padding:28px 28px}
+  .chat-wrap{height:calc(100vh - var(--nav-h))}
+}
+@media(max-width:767px){
+  .sidebar{display:none}
+  .main{padding-bottom:70px}
+}
+
+/* ===== DIVIDER ===== */
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* ===== TOGGLE ===== */
+.toggle-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.toggle-track{width:36px;height:20px;background:var(--border);border-radius:10px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:var(--v)}
+.toggle-thumb{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle-track.on .toggle-thumb{left:18px}
+.toggle-lbl{font-size:12px;color:rgba(10,10,15,0.6)}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(10,10,15,0.15);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">
+    <div class="header-logo-dot"></div>
+    LegalForce Studio
+  </div>
+  <div class="header-actions">
+    <span id="h-gen-count" style="font-size:10px;font-family:var(--mono);color:rgba(10,10,15,0.35)"></span>
+    <button class="hbtn" onclick="showPage('settings')">⚙ Marque</button>
+  </div>
+</header>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR (desktop) -->
+  <nav class="sidebar">
+    <button class="sidebar-item on" data-page="analyse" onclick="showPage('analyse')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span class="sidebar-label">Scan</span>
+    </button>
+    <button class="sidebar-item" data-page="sujets" onclick="showPage('sujets')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span class="sidebar-label">Sujets</span>
+    </button>
+    <button class="sidebar-item" data-page="chat" onclick="showPage('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="sidebar-label">Chat</span>
+    </button>
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-item" data-page="history" onclick="showPage('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="sidebar-label">Hist.</span>
+      <span id="sidebar-hist-badge" class="sidebar-dot" style="display:none"></span>
+    </button>
+    <button class="sidebar-item" data-page="settings" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <span class="sidebar-label">Base</span>
+    </button>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+
+    <!-- ========== PAGE ANALYSE ========== -->
+    <div class="page on" id="page-analyse">
+      <div class="section">
+        <div class="page-title">Analyse <span>template</span></div>
+        <div class="page-sub">Upload ton visuel Canva — 1 image ou un carrousel entier. L'IA réécrit chaque zone de texte avec précision.</div>
+
+        <div class="card">
+          <div class="card-title">Visuels</div>
+          <div class="upload-zone" id="dz"
+               ondragover="event.preventDefault();this.classList.add('over')"
+               ondragleave="this.classList.remove('over')"
+               ondrop="handleDrop(event)">
+            <input type="file" accept="image/*" multiple id="file-in" onchange="handleFiles(event)">
+            <div class="upload-ico">🖼</div>
+            <div class="upload-title">Glisse ou clique pour uploader</div>
+            <div class="upload-sub">PNG · JPG · WebP — 1 image ou plusieurs slides</div>
+          </div>
+          <div id="slides-wrap" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:12px;font-weight:600" id="slides-count"></span>
+              <button class="btn-sm danger" onclick="clearSlides()">Tout effacer</button>
+            </div>
+            <div class="slides-grid" id="slides-grid"></div>
+            <div style="font-size:10px;color:rgba(10,10,15,0.35);text-align:center;font-family:var(--mono)">▶ ◀ pour réorganiser l'ordre</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ciblage</div>
+          <div class="lbl">Plateforme</div>
+          <div class="pills" id="plat-pills">
+            <button class="pill on" onclick="selPill(this,'plat','instagram')">📸 Instagram</button>
+            <button class="pill" onclick="selPill(this,'plat','tiktok')">🎵 TikTok</button>
+            <button class="pill" onclick="selPill(this,'plat','linkedin')">💼 LinkedIn</button>
+            <button class="pill" onclick="selPill(this,'plat','facebook')">📘 Facebook</button>
+            <button class="pill" onclick="selPill(this,'plat','story')">⭕ Story</button>
+            <button class="pill" onclick="selPill(this,'plat','whatsapp')">💬 WhatsApp</button>
+          </div>
+          <div class="algo-tip" id="algo-tip-main">Hook dans les 125 premiers chars · 3–5 hashtags max (algo déc. 2025) · Carrousels = 3× reach · Favorise les sauvegardes</div>
+
+          <div class="lbl" style="margin-top:12px">Objectif</div>
+          <div class="pills" id="obj-pills">
+            <button class="pill pill-r on" onclick="selPill(this,'obj','tofu')">TOFU — Notoriété</button>
+            <button class="pill pill-r" onclick="selPill(this,'obj','mofu')">MOFU — Considération</button>
+            <button class="pill pill-g" onclick="selPill(this,'obj','bofu')">BOFU — Conversion</button>
+            <button class="pill" onclick="selPill(this,'obj','mre')">MRE</button>
+          </div>
+          <div class="obj-explain" id="obj-explain-main">
+            <strong>TOFU</strong> — Audience froide. Objectif : stopper le scroll, créer de la notoriété. Contenu éducatif, chiffres surprenants, questions rhétoriques.
+          </div>
+
+          <div class="lbl" style="margin-top:12px">Structure juridique</div>
+          <select id="struct-sel">
+            <option value="general">Toutes structures</option>
+            <option value="sarl">SARL / SARLAU</option>
+            <option value="sas">SAS / SASU</option>
+            <option value="succursale">Succursale</option>
+            <option value="filiale">Filiale</option>
+            <option value="sa">SA</option>
+          </select>
+
+          <div class="lbl" style="margin-top:12px">Sujet spécifique (optionnel)</div>
+          <input type="text" id="custom-subject" placeholder="Ex: MRE souhaitant créer au Maroc, SARL vs SAS…">
+
+          <div class="toggle-row">
+            <div class="toggle-track" id="tog-darija" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+            <span class="toggle-lbl">Inclure version darija</span>
+          </div>
+        </div>
+
+        <button class="btn btn-v" id="btn-analyse" onclick="doAnalyse()" disabled>Analyser et réécrire →</button>
+        <div id="out-analyse" style="margin-top:12px">
+          <div class="empty"><div class="empty-ico">🖼</div><div class="empty-txt">Upload un template<br>pour commencer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE SUJETS ========== -->
+    <div class="page" id="page-sujets">
+      <div class="section">
+        <div class="page-title">Sujets <span>frais</span></div>
+        <div class="page-sub">20 sujets générés depuis l'actualité marocaine — variés, psychologiquement calibrés pour chaque cible.</div>
+
+        <div class="actu-badge"><div class="actu-dot"></div>Actualité en temps réel</div>
+
+        <div class="card">
+          <button class="btn btn-v" onclick="loadSubjects()" id="btn-subjects">Générer 20 sujets →</button>
+          <div id="subjects-loading" style="display:none" class="loading">
+            <div class="spin"></div>
+            <div class="load-msg">Connexion à l'actualité marocaine…</div>
+            <div class="load-sub">Analyse des tendances</div>
+          </div>
+          <div id="subjects-grid" class="subjects-grid" style="display:none"></div>
+          <div id="sel-subject-info" style="display:none" class="sel-subject-info">
+            <div class="sel-subject-lbl">Sujet sélectionné</div>
+            <div class="sel-subject-txt" id="sel-subject-txt"></div>
+            <button class="btn btn-v" style="margin-top:10px" onclick="useSubjectInAnalyse()">Utiliser ce sujet →</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title-large">Ou entrer ton sujet</div>
+          <input type="text" id="manual-subject" placeholder="Ex: Créer sa SARL depuis la France…">
+          <div class="pills" id="manual-obj-pills" style="margin-top:8px">
+            <button class="pill on" onclick="selPill(this,'manual-obj','tofu')">TOFU</button>
+            <button class="pill" onclick="selPill(this,'manual-obj','mofu')">MOFU</button>
+            <button class="pill" onclick="selPill(this,'manual-obj','bofu')">BOFU</button>
+            <button class="pill" onclick="selPill(this,'manual-obj','mre')">MRE</button>
+          </div>
+          <button class="btn" style="margin-top:10px" onclick="useManualSubject()">Générer avec ce sujet →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE CHAT ========== -->
+    <div class="page" id="page-chat">
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg ai">Salam ! Je suis l'assistant LegalForce Studio. Je connais tous tes produits, prix et cibles. Dis-moi ce que tu veux créer — post Instagram MRE, script Reel 30s, caption BOFU, pack complet… Je génère du contenu qui convertit vraiment. 🚀</div>
+        </div>
+        <div class="chat-input-area">
+          <textarea id="chat-input" placeholder="Fais-moi un post Instagram pour les MRE qui veulent créer leur SARL depuis Paris…" rows="1" oninput="autoResize(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+          <button class="chat-send" onclick="sendChat()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE HISTORY ========== -->
+    <div class="page" id="page-history">
+      <div class="section">
+        <div class="page-title"><span>Historique</span></div>
+        <div class="page-sub">Toutes tes générations sauvegardées localement.</div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span style="font-size:12px;font-family:var(--mono);color:rgba(10,10,15,0.4)" id="hist-info">0 générations</span>
+          <div style="display:flex;gap:7px">
+            <button class="btn-sm" onclick="exportCSV()">CSV</button>
+            <button class="btn-sm danger" onclick="clearHist()">Vider</button>
+          </div>
+        </div>
+
+        <div id="hist-list">
+          <div class="empty"><div class="empty-ico">⏱</div><div class="empty-txt">Aucune génération<br>pour l'instant</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE SETTINGS ========== -->
+    <div class="page" id="page-settings">
+      <div class="section">
+        <div class="page-title">Base de données <span>marque</span></div>
+        <div class="page-sub">Ces infos sont injectées dans chaque génération. Modifie et sauvegarde — tout se met à jour instantanément.</div>
+
+        <div style="background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);border-radius:10px;padding:10px 13px;margin-bottom:14px;font-size:11px;color:#007a5e;font-family:var(--mono);display:flex;align-items:center;gap:7px">
+          <div class="actu-dot"></div>Base de données sauvegardée localement — fonctionne hors connexion
+        </div>
+
+        <div class="card">
+          <div class="card-title">🏢 Identité marque</div>
+          <div class="lbl">Nom</div><input type="text" id="set-brand" value="LegalForce">
+          <div class="lbl">Slogan</div><input type="text" id="set-slogan" value="Créez votre société au Maroc en 7 à 15 jours, 100% en ligne">
+          <div class="lbl">Positionnement</div><input type="text" id="set-positioning" value="Le Legalstart marocain — création de société 100% digitale">
+          <div class="lbl">Site</div><input type="text" id="set-site" value="legalforce.ma">
+          <div class="lbl">WhatsApp</div><input type="text" id="set-wa" value="+212 660 403 053">
+          <div class="lbl">Email</div><input type="text" id="set-email" value="contact@legalforce.ma">
+        </div>
+
+        <div class="card">
+          <div class="card-title">💰 Tarifs</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div class="lbl">SARL Starter</div><input type="text" id="set-p-sarl-s" value="3 900 DH">
+              <div class="lbl">SARL Business</div><input type="text" id="set-p-sarl-b" value="6 900 DH">
+              <div class="lbl">SARL Premium</div><input type="text" id="set-p-sarl-p" value="9 900 DH">
+            </div>
+            <div>
+              <div class="lbl">SAS Starter</div><input type="text" id="set-p-sas-s" value="4 900 DH">
+              <div class="lbl">SAS Business</div><input type="text" id="set-p-sas-b" value="8 900 DH">
+              <div class="lbl">SAS Premium</div><input type="text" id="set-p-sas-p" value="12 900 DH">
+            </div>
+          </div>
+          <div class="lbl">Prix d'appel</div><input type="text" id="set-price" value="3 900 DH">
+          <div class="lbl">Délai</div><input type="text" id="set-delai" value="7 à 15 jours">
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎯 Cibles & Arguments</div>
+          <div class="lbl">Cible locale</div><input type="text" id="set-cible1" value="Entrepreneurs 25–45 ans, Casablanca/Rabat/Marrakech">
+          <div class="lbl">Cible MRE</div><input type="text" id="set-cible2" value="MRE France, Belgique, Espagne, Emirats — création à distance">
+          <div class="lbl">Cible internationale</div><input type="text" id="set-cible3" value="Investisseurs étrangers — Succursale ou Filiale au Maroc">
+          <div class="lbl">Argument 1</div><input type="text" id="set-arg1" value="100% en ligne — zéro déplacement, zéro papier">
+          <div class="lbl">Argument 2</div><input type="text" id="set-arg2" value="Dashboard client + suivi WhatsApp en temps réel">
+          <div class="lbl">Argument 3</div><input type="text" id="set-arg3" value="Paiement échelonné jusqu'en 4x sans frais">
+          <div class="lbl">Stat clé</div><input type="text" id="set-stat" value="95 000+ entreprises créées au Maroc en 2024">
+          <div class="lbl">Ton de voix</div>
+          <textarea id="set-ton" style="min-height:60px">Humain, direct, expert — comme un ami qui conseille. Phrases courtes. Rassurant et orienté résultat.</textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-title"># Hashtags fixes</div>
+          <textarea id="set-hashtags" style="min-height:70px">#legalforce #creersasociete #entrepreneurmaroc #sarlmaroc #creationentreprisemaroc #mre #sociétémaroc #startupmaroc</textarea>
+          <div class="lbl">Hashtags supplémentaires</div>
+          <input type="text" id="set-extra-hashtags" placeholder="#sarl #sas #succursale…">
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎨 Couleurs marque</div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Couleur principale</div><div class="setting-sub">Violet LegalForce</div></div>
+            <input type="color" class="color-pick" id="set-c1" value="#5b4fff">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-lbl">Couleur CTA</div><div class="setting-sub">Rouge action</div></div>
+            <input type="color" class="color-pick" id="set-c2" value="#ff3b3b">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📄 Enrichir via fichier</div>
+          <div style="font-size:12px;color:rgba(10,10,15,0.5);margin-bottom:10px;line-height:1.6">Upload ton Playbook, PDF ou Word — l'IA extrait automatiquement les infos et enrichit la base.</div>
+          <div class="upload-zone" style="padding:18px" onclick="document.getElementById('db-file-in').click()">
+            <input type="file" id="db-file-in" accept=".txt,.md,.pdf,.docx,.json" style="display:none" onchange="handleDBFile(event)">
+            <div class="upload-ico" style="font-size:24px">📁</div>
+            <div class="upload-title" style="font-size:13px">Playbook, PDF, Word, TXT</div>
+            <div class="upload-sub">L'IA analyse et extrait les infos clés</div>
+          </div>
+          <div id="db-file-loading" style="display:none" class="loading">
+            <div class="spin"></div>
+            <div class="load-msg">Analyse du document…</div>
+          </div>
+          <div id="db-file-result" class="db-file-result"></div>
+        </div>
+
+        <button class="btn btn-v" onclick="saveSettings()">💾 Sauvegarder</button>
+        <button class="btn-outline" onclick="resetSettings()">Réinitialiser aux valeurs par défaut</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <button class="bnav-item on" id="bnav-analyse" onclick="showPage('analyse')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Scan
+  </button>
+  <button class="bnav-item" id="bnav-sujets" onclick="showPage('sujets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Sujets
+  </button>
+  <button class="bnav-item" id="bnav-chat" onclick="showPage('chat')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat IA
+  </button>
+  <button class="bnav-item" id="bnav-history" onclick="showPage('history')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Hist.
+    <span class="bnav-badge" id="hist-badge" style="display:none">0</span>
+  </button>
+  <button class="bnav-item" id="bnav-settings" onclick="showPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    Marque
+  </button>
+</nav>
+
+<script>
+// ================================================================
+// DEFAULTS & STATE
+// ================================================================
+const DEFAULTS = {
+  brand:'LegalForce',
+  slogan:"Créez votre société au Maroc en 7 à 15 jours, 100% en ligne",
+  positioning:"Le Legalstart marocain — création de société 100% digitale",
+  site:'legalforce.ma', wa:'+212 660 403 053', email:'contact@legalforce.ma',
+  price:'3 900 DH', delai:'7 à 15 jours',
+  'p-sarl-s':'3 900 DH','p-sarl-b':'6 900 DH','p-sarl-p':'9 900 DH',
+  'p-sas-s':'4 900 DH','p-sas-b':'8 900 DH','p-sas-p':'12 900 DH',
+  cible1:'Entrepreneurs 25–45 ans, Casablanca/Rabat/Marrakech',
+  cible2:'MRE France, Belgique, Espagne, Emirats — création à distance',
+  cible3:'Investisseurs étrangers — Succursale ou Filiale au Maroc',
+  arg1:"100% en ligne — zéro déplacement, zéro papier",
+  arg2:"Dashboard client + suivi WhatsApp en temps réel",
+  arg3:"Paiement échelonné jusqu'en 4x sans frais",
+  stat:'95 000+ entreprises créées au Maroc en 2024',
+  ton:"Humain, direct, expert — comme un ami qui conseille. Phrases courtes.",
+  hashtags:'#legalforce #creersasociete #entrepreneurmaroc #sarlmaroc #creationentreprisemaroc #mre #sociétémaroc #startupmaroc',
+  extraHashtags:'', c1:'#5b4fff', c2:'#ff3b3b'
+};
+
+function getDB(){return {...DEFAULTS,...JSON.parse(localStorage.getItem('lf_db')||'{}')}}
+
+// ================================================================
+// SYSTEM PROMPT — LE CERVEAU DE L'OUTIL
+// ================================================================
+function buildSYS(){
+  const d=getDB();
+  return `Tu es le moteur de contenu expert de ${d.brand} — ${d.positioning}.
+
+MARQUE: ${d.brand} | ${d.site} | ${d.wa}
+SLOGAN: "${d.slogan}"
+DÉLAI: ${d.delai} | PRIX D'APPEL: ${d.price}
+
+GRILLE TARIFAIRE:
+SARL/SARLAU: ${d['p-sarl-s']} (Starter) / ${d['p-sarl-b']} (Business) / ${d['p-sarl-p']} (Premium)
+SAS/SASU: ${d['p-sas-s']} / ${d['p-sas-b']} / ${d['p-sas-p']}
+Succursale: 5 900 / 9 900 / 14 900 DH
+Filiale: 12 900 / 17 900 / 24 900 DH
+SA: 14 900 / 21 900 / 29 900 DH
+
+ARGUMENTS CLÉS:
+• ${d.arg1}
+• ${d.arg2}
+• ${d.arg3}
+• ${d.stat}
+
+CIBLES PRIORITAIRES:
+1. ${d.cible1}
+2. ${d.cible2}
+3. ${d.cible3}
+
+TON: ${d.ton}
+
+HASHTAGS FIXES TOUJOURS INCLUS: ${d.hashtags} ${d.extraHashtags}
+
+═══ ALGORITHMES RÉSEAUX (données confirmées 2025-2026) ═══
+
+INSTAGRAM:
+- Hook OBLIGATOIRE dans les 125 premiers chars (coupure "voir plus")
+- 3–5 hashtags MAX depuis décembre 2025 (plus = pénalité reach)
+- Carrousels génèrent 3× plus de reach que les images simples
+- Temps moyen de lecture: 8 secondes — chaque slide doit valoir le swipe
+- Sauvegardes = signal fort pour l'algo → écrire du contenu "à garder"
+- Stories: texte lisible en 3s max, format 9:16, CTA swipe-up
+
+TIKTOK:
+- Décision de scroll dans 1.7 secondes → L'accroche EST tout
+- Keywords en début de caption pour le SEO TikTok Search
+- 150–300 mots de caption = sweet spot pour le SEO
+- Hashtags: 3–5 ciblés > beaucoup de génériques
+- Sous-titres auto = 40% des vues en mode silencieux
+
+LINKEDIN:
+- Hook dans 140–210 chars (visible avant "voir plus")
+- 1 300–1 600 chars = sweet spot engagement B2B
+- Pas de lien dans le post (mettre en commentaire)
+- Questions rhétoriques en fin de post = +60% commentaires
+- Mardi–jeudi 8h–10h = pics d'engagement
+
+FACEBOOK:
+- Posts de 40–80 chars = +66% engagement vs posts longs
+- Ciblage MRE: intérêts (Maroc, Hespress, CIH Bank) + comportements expatriés
+- Native video > liens externes (boost reach organique ×4)
+
+WHATSAPP:
+- Ton très personnel, conversationnel
+- Pas de hashtags
+- Message court avec une seule action demandée
+
+═══ COPYWRITING D'EXCELLENCE ═══
+
+FRAMEWORKS À UTILISER SELON L'OBJECTIF:
+• TOFU → PAS (Problème → Agitation → Solution) ou simple fait surprenant
+• MOFU → BAB (Before → After → Bridge) ou storytelling client
+• BOFU → AIDA (Attention → Intérêt → Désir → Action) ou urgence sociale
+• MRE → Identité + Appartenance + Facilité (leur peur: "c'est compliqué depuis l'étranger")
+
+DÉCLENCHEURS PSYCHOLOGIQUES PAR CIBLE:
+Entrepreneurs locaux: peur de rater le bon timing, fierté de réussir, comparaison sociale ("tes concurrents créent déjà")
+MRE: nostalgie + ambition de "réussir au bled", peur que ça se complique à distance, désir d'ancrage identitaire
+Investisseurs étrangers: sécurité juridique, rapidité ROI, crédibilité locale, risque minimisé
+
+PREUVES SOCIALES À INJECTER:
+• "95 000+ entreprises créées au Maroc en 2024"
+• "7 à 15 jours — tout en ligne depuis ton téléphone"
+• "Capital minimum: 1 dirham"
+• Paiement échelonné 4x sans frais
+
+RÈGLES ABSOLUES:
+1. Jamais générique — toujours spécifique à LegalForce et à la cible
+2. Le hook doit créer une tension ou une curiosité irrésistible
+3. Une seule idée par texte — pas de liste dans les captions
+4. CTA concret et actionnable (pas "contactez-nous" → "Envoyez SARL au +212660403053")
+5. Toujours les hashtags LegalForce fixes + 2–3 hashtags spécifiques au sujet
+6. Prix TOUJOURS en DH et se terminant par 900`;
+}
+
+// ================================================================
+// ALGO TIPS & OBJ EXPLAINS
+// ================================================================
+const ALGO_TIPS = {
+  instagram:'Hook dans les 125 premiers chars · 3–5 hashtags max (déc. 2025) · Carrousels = 3× reach · Favorise les sauvegardes',
+  tiktok:'Accroche dans 1.7 secondes (décision de scroll) · Keywords en début · 150–300 chars SEO · 3–5 hashtags ciblés',
+  linkedin:'Hook 140–210 chars · 1 300–1 600 chars optimal · Pas de lien dans le post · Question en fin = +60% commentaires',
+  facebook:'Posts 40–80 chars = +66% engagement · Ciblage MRE par intérêts + comportements expatriés',
+  story:'Texte lisible en 3 secondes · Format 9:16 obligatoire · CTA swipe-up · Maximum 1 message par story',
+  whatsapp:'Ton conversationnel personnel · Pas de hashtags · Message court · 1 seule action demandée'
+};
+
+const OBJ_EXPLAINS = {
+  tofu:`<strong>TOFU — Notoriété</strong> · Audience froide. Objectif: stopper le scroll, créer de la notoriété. Frameworks: PAS (Problème→Agitation→Solution) ou fait surprenant. Déclencheur: curiosité + peur de manquer.`,
+  mofu:`<strong>MOFU — Considération</strong> · Audience qui te connaît mais hésite. Objectif: montrer la valeur, lever les objections. Framework: BAB (Before→After→Bridge) ou storytelling client réel.`,
+  bofu:`<strong>BOFU — Conversion</strong> · Audience prête à acheter. Objectif: déclencher l'action maintenant. Framework: AIDA + urgence sociale. Mentions: prix, paiement 4x, délai 7–15 jours.`,
+  mre:`<strong>MRE — Diaspora</strong> · Marocains en France, Belgique, Espagne, Emirats. Déclencheur: identité + appartenance + facilité. Message: "Tu peux créer ton entreprise au Maroc depuis ton canapé à Paris."`
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let st = {
+  plat:'instagram', obj:'tofu', manualObj:'tofu',
+  slides:[], selectedSubject:null, chatHistory:[]
+};
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sidebar-item,.bnav-item').forEach(b=>b.classList.remove('on'));
+  const pg=document.getElementById('page-'+name);
+  if(pg)pg.classList.add('on');
+  document.querySelectorAll(`[data-page="${name}"], #bnav-${name}`).forEach(b=>b.classList.add('on'));
+  if(name==='history')renderHist();
+  document.getElementById('main-content').scrollTo(0,0);
+}
+
+// ================================================================
+// PILL SELECTION
+// ================================================================
+function selPill(el,key,val){
+  el.closest('.pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  st[key]=val;
+  if(key==='plat'){
+    const tip=document.getElementById('algo-tip-main');
+    if(tip)tip.textContent=ALGO_TIPS[val]||'';
+  }
+  if(key==='obj'){
+    const exp=document.getElementById('obj-explain-main');
+    if(exp)exp.innerHTML=OBJ_EXPLAINS[val]||'';
+  }
+}
+
+// ================================================================
+// FILE HANDLING
+// ================================================================
+function handleFiles(e){addSlides(Array.from(e.target.files))}
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('over');
+  addSlides(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));
+}
+function addSlides(files){
+  files.slice(0,10-st.slides.length).forEach(f=>{
+    const mime=['image/jpeg','image/png','image/gif','image/webp'].includes(f.type)?f.type:'image/jpeg';
+    const r=new FileReader();
+    r.onload=e=>{st.slides.push({b64:e.target.result.split(',')[1],src:e.target.result,mime,name:f.name});renderSlides()};
+    r.readAsDataURL(f);
+  });
+}
+function renderSlides(){
+  const wrap=document.getElementById('slides-wrap');
+  const grid=document.getElementById('slides-grid');
+  const count=document.getElementById('slides-count');
+  const btn=document.getElementById('btn-analyse');
+  if(!st.slides.length){wrap.style.display='none';btn.disabled=true;return;}
+  wrap.style.display='block';btn.disabled=false;
+  const n=st.slides.length;
+  count.textContent=n>1?`${n} slides — carrousel détecté 🎯`:'1 image';
+  grid.innerHTML=st.slides.map((s,i)=>`
+    <div class="slide-item">
+      <img src="${s.src}" alt="">
+      <div class="slide-num">${i+1}</div>
+      <button class="slide-rm" onclick="rmSlide(${i})">×</button>
+      <div class="slide-mv">
+        ${i>0?`<button onclick="mvSlide(${i},-1)">◀</button>`:''}
+        ${i<st.slides.length-1?`<button onclick="mvSlide(${i},1)">▶</button>`:''}
+      </div>
+    </div>`).join('');
+}
+function rmSlide(i){st.slides.splice(i,1);renderSlides()}
+function mvSlide(i,d){const j=i+d;if(j<0||j>=st.slides.length)return;[st.slides[i],st.slides[j]]=[st.slides[j],st.slides[i]];renderSlides()}
+function clearSlides(){st.slides=[];document.getElementById('file-in').value='';renderSlides();document.getElementById('out-analyse').innerHTML='<div class="empty"><div class="empty-ico">🖼</div><div class="empty-txt">Upload un template<br>pour commencer</div></div>'}
+
+// ================================================================
+// API CLAUDE
+// ================================================================
+const LM=['Analyse visuelle en cours…','Détection des zones de texte…','Application des frameworks copywriting…','Optimisation algorithme…','Génération du contenu final…'];
+let loadInt;
+function startLoading(outId){
+  let i=0;
+  const out=document.getElementById(outId);
+  if(out)out.innerHTML=`<div class="loading"><div class="spin"></div><div class="load-msg">${LM[0]}</div><div class="load-sub" id="load-sub-msg"></div></div>`;
+  loadInt=setInterval(()=>{i=(i+1)%LM.length;const el=document.getElementById('load-sub-msg');if(el)el.textContent=LM[i]},1400);
+}
+function stopLoading(){clearInterval(loadInt)}
+
+async function callAPI(prompt,images=[]){
+  let content;
+  if(!images.length)content=prompt;
+  else if(images.length===1)content=[{type:'image',source:{type:'base64',media_type:images[0].mime,data:images[0].b64}},{type:'text',text:prompt}];
+  else{content=images.map(img=>({type:'image',source:{type:'base64',media_type:img.mime,data:img.b64}}));content.push({type:'text',text:prompt});}
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,system:buildSYS(),messages:[{role:'user',content}]})
+  });
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'Erreur API '+res.status)}
+  return(await res.json()).content?.[0]?.text||''
+}
+function parseJ(raw){try{return JSON.parse(raw.replace(/```json|```/g,'').trim())}catch{return null}}
+
+// ================================================================
+// CHAR BAR
+// ================================================================
+const CLIMS={instagram:{max:2200,vis:125},tiktok:{max:4000,vis:100},linkedin:{max:3000,vis:210},facebook:{max:63206,vis:9999},story:{max:500,vis:9999},whatsapp:{max:9999,vis:9999}};
+function charBar(text,plat){
+  const lim=CLIMS[plat]||CLIMS.instagram;
+  if(lim.vis>=9999)return '';
+  const len=(text||'').length;
+  const pct=Math.min(100,Math.round(len/lim.vis*100));
+  const ok=len<=lim.vis;const col=ok?'var(--g)':'var(--r)';
+  return `<div class="char-bar"><div class="char-info"><span>Visible avant coupure ${plat}</span><span style="color:${col};font-family:var(--mono)">${Math.min(len,lim.vis)}/${lim.vis}</span></div><div class="char-track"><div class="char-fill" style="width:${pct}%;background:${col}"></div></div></div>`;
+}
+
+// ================================================================
+// HOOK SCORE
+// ================================================================
+function hookScore(text){
+  if(!text)return 0;let s=42;
+  if(/\d/.test(text))s+=15;if(/\?/.test(text))s+=12;
+  if(text.length<80)s+=12;if(/vous|votre|tu|ton/i.test(text))s+=10;
+  if(/!/.test(text))s+=6;if(/jamais|secret|vrai|réel|direct/i.test(text))s+=3;
+  return Math.min(99,s);
+}
+
+// ================================================================
+// ANALYSE PRINCIPALE
+// ================================================================
+async function doAnalyse(){
+  if(!st.slides.length)return;
+  const btn=document.getElementById('btn-analyse');btn.disabled=true;
+  const out='out-analyse';
+  const isCarousel=st.slides.length>1;
+  const customSubj=document.getElementById('custom-subject').value.trim();
+  const struct=document.getElementById('struct-sel').value;
+  const darija=document.getElementById('tog-darija').classList.contains('on');
+  const subjNote=customSubj?`\nSujet spécifique demandé: "${customSubj}"`:(st.selectedSubject?`\nSujet: "${st.selectedSubject}"`:'');
+  const darijaNote=darija?'\nInclure aussi une version en darija marocain pour chaque texte principal.':'';
+
+  startLoading(out);
+  try{
+    let raw,result;
+    if(isCarousel){
+      const prompt=`Tu analyses ${st.slides.length} images qui forment un CARROUSEL dans cet ordre exact.
+${subjNote}${darijaNote}
+OBJECTIF: ${st.obj} | PLATEFORME: ${st.plat} | STRUCTURE: ${struct==='general'?'Toutes':struct.toUpperCase()}
+
+MISSION CRITIQUE — COHÉRENCE NARRATIVE:
+Tu dois analyser TOUTES les slides ensemble avant de réécrire quoi que ce soit.
+Identifie: slide 1 = accroche/hook, slides 2→N-1 = développement de valeur, slide N = CTA/conclusion.
+Chaque texte réécrit doit s'enchaîner naturellement avec le précédent et le suivant.
+Utilise le framework copywriting adapté à l'objectif: ${st.obj==='tofu'?'PAS (Problème→Agitation→Solution)':st.obj==='mofu'?'BAB (Before→After→Bridge)':st.obj==='bofu'?'AIDA (Attention→Intérêt→Désir→Action)':'Identité + Appartenance + Facilité (cible MRE)'}.
+
+RÈGLE LONGUEUR: Respecte scrupuleusement la longueur approximative de chaque texte original. Titre court = titre court. Corps long = corps long.
+
+JSON UNIQUEMENT:
+{
+  "sujet_detecte": "sujet narratif global",
+  "structure_narrative": "description du fil conducteur",
+  "framework_utilise": "nom du framework copywriting appliqué",
+  "hashtags_specifiques": ["#tag1","#tag2","#tag3"],
+  "caption": "caption ${st.plat} complète avec tous les hashtags",
+  "hook_score": 85,
+  "slides": [
+    {
+      "slide_num": 1,
+      "role": "accroche|développement|CTA",
+      "tension_narrative": "ce qui donne envie de passer à la slide suivante",
+      "textes": [
+        {
+          "zone": "nom de la zone (ex: titre principal)",
+          "original_chars": 45,
+          "texte": "nouveau texte LegalForce",
+          "conseil_algo": "conseil spécifique pour cette zone sur ${st.plat}"
+        }
+      ]
+    }
+  ]
+}`;
+      raw=await callAPI(prompt,st.slides);
+      result=parseJ(raw);
+      stopLoading();
+      if(result?.slides)renderCarousel(result);
+      else document.getElementById(out).innerHTML=`<div class="result-block"><div class="result-txt">${raw.replace(/\n/g,'<br>')}</div></div>`;
+    } else {
+      const prompt=`Analyse cette image template et identifie ABSOLUMENT TOUS les textes visibles.
+${subjNote}${darijaNote}
+OBJECTIF: ${st.obj} | PLATEFORME: ${st.plat} | STRUCTURE: ${struct==='general'?'Toutes':struct.toUpperCase()}
+
+MISSION:
+1. Identifie chaque zone de texte avec son rôle précis (titre H1, sous-titre, body, CTA, hashtag, label, prix, mention légale…)
+2. Réécris chaque texte en RESPECTANT la longueur approximative originale
+3. Applique le framework copywriting: ${st.obj==='tofu'?'PAS':st.obj==='mofu'?'BAB':st.obj==='bofu'?'AIDA':'Identité+Appartenance+Facilité'}
+4. Le hook principal doit créer une tension irrésistible
+
+JSON UNIQUEMENT:
+{
+  "textes": [
+    {
+      "zone": "titre principal",
+      "role": "H1 accroche",
+      "original_chars": 60,
+      "texte": "nouveau texte LegalForce",
+      "conseil_algo": "conseil spécifique ${st.plat}"
+    }
+  ],
+  "caption": "caption ${st.plat} complète avec hashtags",
+  "hashtags_specifiques": ["#tag1","#tag2"],
+  "hook_score": 85,
+  "framework_utilise": "PAS/BAB/AIDA/etc"
+}`;
+      raw=await callAPI(prompt,[st.slides[0]]);
+      result=parseJ(raw);
+      stopLoading();
+      if(result?.textes)renderSingle(result);
+      else document.getElementById(out).innerHTML=`<div class="result-block"><div class="result-txt">${raw.replace(/\n/g,'<br>')}</div></div>`;
+    }
+    saveHist(isCarousel?`Carrousel ${st.slides.length} slides`:'Image analysée',result?.sujet_detecte||result?.textes?.[0]?.texte||'',st.plat,st.obj);
+    incGen();
+  } catch(e){
+    stopLoading();
+    document.getElementById(out).innerHTML=`<div class="err-box">
+      Erreur: ${e.message}<br><br>
+      ⚠️ Ce fichier doit être ouvert via une URL HTTPS (pas en local file://).<br>
+      Solution: déposer sur <strong>netlify.com/drop</strong> ou <strong>vercel.com</strong>.
+    </div>`;
+  }
+  btn.disabled=false;
+}
+
+// ================================================================
+// RENDER RESULTS
+// ================================================================
+function renderSingle(r){
+  const out=document.getElementById('out-analyse');const plat=st.plat;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:11px;font-family:var(--mono);color:rgba(10,10,15,0.4)">Framework: <strong style="color:var(--v)">${r.framework_utilise||'—'}</strong></div>
+    <button class="btn-sm" onclick="cpAll('out-analyse')">Tout copier</button>
+  </div>`;
+  r.textes?.forEach((t,i)=>{
+    const bid=`rb-${Date.now()}-${i}`;
+    const te=(t.texte||'').replace(/`/g,'\\`').replace(/\n/g,'\\n');
+    const zo=(t.zone||'').replace(/`/g,'\\`');
+    h+=`<div class="result-block ${i===0?'hi':''}" id="${bid}">
+      <div class="result-head">
+        <div>
+          <div class="result-lbl">${t.zone||''}</div>
+          <div class="result-role">${t.role||''} · ~${t.original_chars||'?'} chars</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="btn-sm" title="Retoucher" onclick="openRetouche('${bid}',\`${te}\`,\`${zo}\`,\`${plat}\`)">✏️</button>
+          <button class="btn-sm" onclick="cp(this,\`${te}\`)">Copier</button>
+        </div>
+      </div>
+      <div class="result-txt">${(t.texte||'').replace(/\n/g,'<br>')}</div>
+      ${t.conseil_algo?`<div class="result-tip">💡 ${t.conseil_algo}</div>`:''}
+      ${i===0?charBar(t.texte,plat):''}
+    </div>`;
+  });
+  if(r.caption){
+    const capId=`rb-cap-${Date.now()}`;
+    const capE=r.caption.replace(/`/g,'\\`').replace(/\n/g,'\\n');
+    h+=`<div class="result-block coherent" id="${capId}">
+      <div class="result-head">
+        <div><div class="result-lbl" style="color:var(--g)">Caption ${plat} complète</div></div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="btn-sm" onclick="openRetouche('${capId}',\`${capE}\`,'Caption ${plat}',\`${plat}\`)">✏️</button>
+          <button class="btn-sm" onclick="cp(this,\`${capE}\`)">Copier</button>
+        </div>
+      </div>
+      <div class="result-txt">${r.caption.replace(/\n/g,'<br>')}</div>
+      ${charBar(r.caption,plat)}
+    </div>`;
+  }
+  const hs=r.hook_score||hookScore(r.textes?.[0]?.texte||'');
+  const hsc=hs>=80?'var(--g)':hs>=60?'var(--gld)':'var(--r)';
+  h+=`<div class="hook-score">
+    <span class="hook-label">Score hook</span>
+    <div class="hook-track"><div class="hook-fill" style="width:${hs}%;background:${hsc}"></div></div>
+    <span class="hook-val" style="color:${hsc};font-family:var(--mono)">${hs}/100</span>
+  </div>`;
+  const allTags=[...(r.hashtags_specifiques||[]),...getDB().hashtags.split(' ')].filter(t=>t.startsWith('#'));
+  const uniqueTags=[...new Set(allTags)];
+  h+=`<div class="hashtag-box"><div class="hashtag-title">Hashtags recommandés</div>
+    <div class="hashtag-list">${uniqueTags.map(t=>`<span class="hashtag-item" onclick="cp(null,'${t}')">${t}</span>`).join('')}</div>
+    <button class="btn-sm" style="margin-top:8px;width:100%" onclick="cp(this,\`${uniqueTags.join(' ')}\`)">Copier tous les hashtags</button>
+  </div>`;
+  out.innerHTML=h;
+}
+
+function renderCarousel(r){
+  const out=document.getElementById('out-analyse');const plat=st.plat;
+  let h=`<div class="result-block coherent">
+    <div class="result-head">
+      <div>
+        <div class="result-lbl" style="color:var(--g)">Carrousel ${r.slides?.length} slides · Cohérence narrative</div>
+        <div class="result-role">${r.sujet_detecte||''}</div>
+      </div>
+      <button class="btn-sm" onclick="cpAll('out-analyse')">Tout copier</button>
+    </div>
+    <div class="result-txt" style="font-size:11px;font-family:var(--mono)">${r.structure_narrative||''}</div>
+    <div style="font-size:10px;color:var(--v);font-family:var(--mono);margin-top:5px">Framework: ${r.framework_utilise||'—'}</div>
+  </div>`;
+  r.slides?.forEach((slide,si)=>{
+    const thumb=st.slides[si]?.src||'';
+    const bodyId=`slide-body-${si}`;
+    const hdrId=`slide-hdr-${si}`;
+    h+=`<div class="slide-result">
+      <div class="slide-result-hdr" id="${hdrId}" onclick="toggleSlide('${bodyId}','${hdrId}')">
+        ${thumb?`<img class="slide-thumb" src="${thumb}">`:''}
+        <div class="slide-info">
+          <div class="slide-title">Slide ${slide.slide_num} — ${slide.role||''}</div>
+          <div class="slide-sub">${slide.textes?.length||0} zone(s) · ${slide.tension_narrative||''}</div>
+        </div>
+        <span class="slide-chevron">›</span>
+      </div>
+      <div class="slide-body ${si===0?'open':''}" id="${bodyId}">
+        ${(slide.textes||[]).map((t,ti)=>{
+          const bid=`rb-${si}-${ti}-${Date.now()}`;
+          const te=(t.texte||'').replace(/`/g,'\\`').replace(/\n/g,'\\n');
+          const zo=(t.zone||'').replace(/`/g,'\\`');
+          return `<div class="result-block ${ti===0?'hi':''}" id="${bid}">
+            <div class="result-head">
+              <div>
+                <div class="result-lbl">${t.zone||''}</div>
+                <div class="result-role">~${t.original_chars||'?'} chars</div>
+              </div>
+              <div style="display:flex;gap:5px;flex-shrink:0">
+                <button class="btn-sm" onclick="openRetouche('${bid}',\`${te}\`,\`${zo}\`,\`${plat}\`)">✏️</button>
+                <button class="btn-sm" onclick="cp(this,\`${te}\`)">Copier</button>
+              </div>
+            </div>
+            <div class="result-txt">${(t.texte||'').replace(/\n/g,'<br>')}</div>
+            ${t.conseil_algo?`<div class="result-tip">💡 ${t.conseil_algo}</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  if(r.caption){
+    const capId=`cap-main-${Date.now()}`;
+    const capE=r.caption.replace(/`/g,'\\`').replace(/\n/g,'\\n');
+    h+=`<div class="result-block coherent" id="${capId}">
+      <div class="result-head">
+        <div><div class="result-lbl" style="color:var(--g)">Caption ${plat} du post</div></div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="btn-sm" onclick="openRetouche('${capId}',\`${capE}\`,'Caption ${plat}',\`${plat}\`)">✏️</button>
+          <button class="btn-sm" onclick="cp(this,\`${capE}\`)">Copier</button>
+        </div>
+      </div>
+      <div class="result-txt">${r.caption.replace(/\n/g,'<br>')}</div>
+      ${charBar(r.caption,plat)}
+    </div>`;
+  }
+  const hs=r.hook_score||hookScore(r.slides?.[0]?.textes?.[0]?.texte||'');
+  const hsc=hs>=80?'var(--g)':hs>=60?'var(--gld)':'var(--r)';
+  h+=`<div class="hook-score">
+    <span class="hook-label">Score hook</span>
+    <div class="hook-track"><div class="hook-fill" style="width:${hs}%;background:${hsc}"></div></div>
+    <span class="hook-val" style="color:${hsc};font-family:var(--mono)">${hs}/100</span>
+  </div>`;
+  const allTags=[...(r.hashtags_specifiques||[]),...getDB().hashtags.split(' ')].filter(t=>t.startsWith('#'));
+  h+=`<div class="hashtag-box"><div class="hashtag-title">Hashtags</div>
+    <div class="hashtag-list">${[...new Set(allTags)].map(t=>`<span class="hashtag-item" onclick="cp(null,'${t}')">${t}</span>`).join('')}</div>
+    <button class="btn-sm" style="margin-top:8px;width:100%" onclick="cp(this,\`${[...new Set(allTags)].join(' ')}\`)">Copier tous</button>
+  </div>`;
+  out.innerHTML=h;
+}
+
+function toggleSlide(bodyId,hdrId){
+  document.getElementById(bodyId).classList.toggle('open');
+  document.getElementById(hdrId).classList.toggle('open');
+}
+
+// ================================================================
+// MODE RETOUCHE
+// ================================================================
+let _retoucheCtx={};
+function openRetouche(blockId,texte,zone,plat){
+  const block=document.getElementById(blockId);if(!block)return;
+  const existing=block.querySelector('.retouche-panel');if(existing){existing.remove();return;}
+  _retoucheCtx[blockId]={texte,zone,plat};
+  const panel=document.createElement('div');panel.className='retouche-panel';
+  panel.innerHTML=`<div class="retouche-lbl">✏️ Retouche — ${zone}</div>
+    <textarea id="rt-input-${blockId}" style="min-height:60px;font-size:13px;width:100%;background:white;border:1.5px solid rgba(91,79,255,0.25);border-radius:10px;padding:9px 12px;font-family:var(--ff);outline:none" placeholder="Dis-moi ce que tu veux changer — ton, longueur, angle, cible…"></textarea>
+    <div class="retouche-actions">
+      <button class="btn btn-v" style="flex:1;padding:10px;font-size:13px" onclick="doRetouche('${blockId}')">Régénérer →</button>
+      <button class="btn-sm" onclick="this.closest('.retouche-panel').remove()" style="padding:10px 14px">✕</button>
+    </div>`;
+  block.appendChild(panel);panel.querySelector('textarea').focus();
+}
+
+async function doRetouche(blockId){
+  const ctx=_retoucheCtx[blockId];if(!ctx)return;
+  const input=document.getElementById(`rt-input-${blockId}`);
+  const instruction=input?.value?.trim();if(!instruction){alert('Dis-moi ce que tu veux changer !');return;}
+  const block=document.getElementById(blockId);
+  const panel=block?.querySelector('.retouche-panel');
+  if(panel)panel.innerHTML='<div class="loading" style="padding:12px"><div class="spin" style="margin:0 auto 6px"></div><div class="load-msg" style="font-size:11px">Régénération…</div></div>';
+  try{
+    const raw=await callAPI(`TEXTE ACTUEL (zone: ${ctx.zone}):
+"${ctx.texte}"
+
+CONTEXTE: Post ${ctx.plat} LegalForce — Objectif: ${st.obj}
+
+INSTRUCTION DE RETOUCHE: ${instruction}
+
+Génère uniquement le nouveau texte amélioré — sans explication, sans guillemets, juste le texte optimisé.`);
+    const newText=raw.trim();
+    const txtEl=block?.querySelector('.result-txt');if(txtEl)txtEl.innerHTML=newText.replace(/\n/g,'<br>');
+    const copyBtn=block?.querySelector('.btn-sm');if(copyBtn)copyBtn.setAttribute('onclick',`cp(this,\`${newText.replace(/`/g,'\\`').replace(/\n/g,'\\n')}\`)`);
+    block?.querySelector('.retouche-panel')?.remove();
+    const head=block?.querySelector('.result-head');
+    if(head&&!head.querySelector('.retouche-badge'))head.insertAdjacentHTML('beforeend','<span class="retouche-badge">RETOUCHÉ</span>');
+    _retoucheCtx[blockId].texte=newText;
+  }catch(e){if(panel)panel.innerHTML=`<div class="err-box" style="font-size:11px">${e.message}</div>`}
+}
+
+// ================================================================
+// SUJETS
+// ================================================================
+async function loadSubjects(){
+  const btn=document.getElementById('btn-subjects');btn.disabled=true;
+  const loading=document.getElementById('subjects-loading');
+  const grid=document.getElementById('subjects-grid');
+  const info=document.getElementById('sel-subject-info');
+  loading.style.display='block';grid.style.display='none';info.style.display='none';st.selectedSubject=null;
+  try{
+    const raw=await callAPI(`Génère exactement 20 sujets de posts pour LegalForce basés sur l'actualité marocaine 2026 et les tendances entrepreneuriales.
+
+EXIGENCES:
+- Variés: au moins 5 TOFU, 5 MOFU, 5 BOFU, 3 MRE, 2 investisseurs étrangers
+- Connectés à l'actualité: Coupe du Monde 2030 Maroc, boom investissements, MRE record de transferts, startup Casablanca, entrepreneurs Gen Z marocains
+- Psychologiquement calibrés: chaque sujet doit avoir un angle émotionnel fort
+- Titres accrocheurs: max 65 chars, créent de la curiosité ou de la tension
+
+JSON UNIQUEMENT:
+{"subjects":[{"type":"tofu","titre":"sujet accrocheur","angle":"angle psychologique précis"}]}`);
+    const p=parseJ(raw);
+    loading.style.display='none';
+    if(p?.subjects){
+      grid.style.display='grid';
+      grid.innerHTML=p.subjects.map((s,i)=>`
+        <div class="subject-card" onclick="selectSubject(this,${i},\`${(s.titre||'').replace(/`/g,'\\`')}\`)">
+          <span class="subject-tag tag-${s.type||'tofu'}">${(s.type||'TOFU').toUpperCase()}</span>
+          <div class="subject-title">${s.titre||''}</div>
+          <div class="subject-check">✓</div>
+        </div>`).join('');
+    }
+  }catch(e){loading.style.display='none';grid.innerHTML=`<div class="err-box" style="grid-column:1/-1;font-size:11px">${e.message}</div>`;grid.style.display='block';}
+  btn.disabled=false;
+}
+
+function selectSubject(el,idx,titre){
+  document.querySelectorAll('.subject-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');st.selectedSubject=titre;
+  const info=document.getElementById('sel-subject-info');info.style.display='block';
+  document.getElementById('sel-subject-txt').textContent=titre;
+  info.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function useSubjectInAnalyse(){
+  if(st.selectedSubject)document.getElementById('custom-subject').value=st.selectedSubject;
+  showPage('analyse');
+}
+
+function useManualSubject(){
+  const subj=document.getElementById('manual-subject').value.trim();if(!subj){alert('Indique un sujet !');return;}
+  st.selectedSubject=subj;document.getElementById('custom-subject').value=subj;showPage('analyse');
+}
+
+// ================================================================
+// CHAT IA
+// ================================================================
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';input.style.height='auto';
+  const msgs=document.getElementById('chat-messages');
+  st.chatHistory.push({role:'user',content:msg});
+  msgs.innerHTML+=`<div class="chat-msg user">${msg.replace(/\n/g,'<br>')}</div>`;
+  const loadEl=document.createElement('div');
+  loadEl.className='chat-msg ai loading';loadEl.id='chat-loading';loadEl.textContent='En train de rédiger…';
+  msgs.appendChild(loadEl);msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:2000,
+        system:buildSYS()+'\n\nTu es un assistant conversationnel expert en copywriting et marketing digital. Réponds de manière naturelle et directe. Génère du contenu qui convertit vraiment — pas du contenu générique. Inclus toujours les hashtags LegalForce fixes dans tes générations.',
+        messages:st.chatHistory
+      })
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message)}
+    const data=await res.json();const reply=data.content?.[0]?.text||'';
+    st.chatHistory.push({role:'assistant',content:reply});
+    document.getElementById('chat-loading').remove();
+    msgs.innerHTML+=`<div class="chat-msg ai">${reply.replace(/\n/g,'<br>')}</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+    saveHist('Chat',msg,st.plat,st.obj);incGen();
+  }catch(e){
+    document.getElementById('chat-loading').remove();
+    msgs.innerHTML+=`<div class="chat-msg ai loading">Erreur: ${e.message}. Ce fichier doit être ouvert via une URL HTTPS.</div>`;
+  }
+}
+
+// ================================================================
+// SETTINGS
+// ================================================================
+function saveSettings(){
+  const ids=['brand','slogan','positioning','site','wa','email','price','delai',
+    'p-sarl-s','p-sarl-b','p-sarl-p','p-sas-s','p-sas-b','p-sas-p',
+    'cible1','cible2','cible3','arg1','arg2','arg3','stat','ton','hashtags','extra-hashtags','c1','c2'];
+  const data={};
+  ids.forEach(k=>{const el=document.getElementById('set-'+k);if(el)data[k]=el.value});
+  localStorage.setItem('lf_db',JSON.stringify(data));
+  const btn=event?.target;
+  if(btn){const orig=btn.textContent;btn.textContent='✓ Sauvegardé !';btn.style.background='var(--g)';setTimeout(()=>{btn.textContent=orig;btn.style.background=''},2500)}
+}
+
+function loadSettings(){
+  const d=getDB();
+  const map={'set-brand':d.brand,'set-slogan':d.slogan,'set-positioning':d.positioning,'set-site':d.site,'set-wa':d.wa,'set-email':d.email,'set-price':d.price,'set-delai':d.delai,'set-p-sarl-s':d['p-sarl-s'],'set-p-sarl-b':d['p-sarl-b'],'set-p-sarl-p':d['p-sarl-p'],'set-p-sas-s':d['p-sas-s'],'set-p-sas-b':d['p-sas-b'],'set-p-sas-p':d['p-sas-p'],'set-cible1':d.cible1,'set-cible2':d.cible2,'set-cible3':d.cible3,'set-arg1':d.arg1,'set-arg2':d.arg2,'set-arg3':d.arg3,'set-stat':d.stat,'set-ton':d.ton,'set-hashtags':d.hashtags,'set-extra-hashtags':d.extraHashtags,'set-c1':d.c1,'set-c2':d.c2};
+  Object.entries(map).forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val)el.value=val});
+}
+
+function resetSettings(){
+  if(!confirm('Réinitialiser ?'))return;
+  localStorage.removeItem('lf_db');loadSettings();
+  const btn=event?.target;if(btn){btn.textContent='✓ Réinitialisé';setTimeout(()=>btn.textContent='Réinitialiser aux valeurs par défaut',2000)}
+}
+
+// ================================================================
+// DB FILE
+// ================================================================
+const EXTRACT_PROMPT=`Analyse ce document et extrais les informations business LegalForce.
+JSON uniquement:{"brand":"?","slogan":"?","prix":"infos prix","arguments":["arg1","arg2"],"cibles":["cible1","cible2"],"ton":"?","stats":"?","hashtags":"#tags si trouvés","autres_infos":"?"}
+Inclure uniquement les champs présents dans le document.`;
+
+async function handleDBFile(e){
+  const file=e.target.files?.[0];if(!file)return;
+  const loading=document.getElementById('db-file-loading');
+  const result=document.getElementById('db-file-result');
+  loading.style.display='block';result.innerHTML='';
+  try{
+    let content='';
+    const text=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsText(file)});
+    const raw=await callAPI(`${EXTRACT_PROMPT}\n\nDOCUMENT:\n${text.substring(0,12000)}`);
+    loading.style.display='none';
+    const p=parseJ(raw);
+    if(p){
+      result.innerHTML=`<div style="background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);border-radius:10px;padding:12px;margin-bottom:8px">
+        <div style="font-size:10px;font-weight:700;font-family:var(--mono);color:var(--g);margin-bottom:6px">✅ Document analysé: ${file.name}</div>
+        ${Object.entries(p).filter(([k,v])=>v&&k!=='autres_infos').map(([k,v])=>`
+          <div class="extracted-field">
+            <div class="ext-lbl">${k}</div>
+            <div class="ext-val">${Array.isArray(v)?v.join(' · '):String(v).substring(0,120)}</div>
+          </div>`).join('')}
+        <button class="btn btn-v" onclick="applyExtracted(${JSON.stringify(JSON.stringify(p)).replace(/'/g,'\\'')})" style="margin-top:8px;font-size:13px;padding:11px">Appliquer à la base de données</button>
+      </div>`;
+    }
+  }catch(e){loading.style.display='none';result.innerHTML=`<div class="err-box" style="font-size:11px">${e.message}</div>`}
+  e.target.value='';
+}
+
+let _lastExtracted={};
+function applyExtracted(jsonStr){
+  try{
+    const data=JSON.parse(jsonStr);_lastExtracted=data;
+    if(data.brand)document.getElementById('set-brand').value=data.brand;
+    if(data.slogan)document.getElementById('set-slogan').value=data.slogan;
+    if(data.ton)document.getElementById('set-ton').value=data.ton;
+    if(data.stats)document.getElementById('set-stat').value=data.stats;
+    if(data.hashtags)document.getElementById('set-hashtags').value=data.hashtags;
+    if(data.arguments?.length){
+      ['set-arg1','set-arg2','set-arg3'].forEach((id,i)=>{if(data.arguments[i]){const el=document.getElementById(id);if(el)el.value=data.arguments[i]}});
+    }
+    if(data.cibles?.length){
+      ['set-cible1','set-cible2','set-cible3'].forEach((id,i)=>{if(data.cibles[i]){const el=document.getElementById(id);if(el)el.value=data.cibles[i]}});
+    }
+    saveSettings();
+    document.getElementById('db-file-result').insertAdjacentHTML('afterbegin','<div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);border-radius:8px;padding:10px;margin-bottom:8px;font-size:11px;color:var(--g);font-family:var(--mono)">✅ Base de données mise à jour et sauvegardée !</div>');
+  }catch(e){console.error(e)}
+}
+
+// ================================================================
+// COPY
+// ================================================================
+function cp(btn,text){
+  const t=(text||'').replace(/\\n/g,'\n');
+  navigator.clipboard.writeText(t).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)});
+  if(btn){btn.classList.add('ok');btn.textContent='Copié !';setTimeout(()=>{btn.classList.remove('ok');btn.textContent='Copier'},2000)}
+}
+function cpAll(id){
+  const t=[...document.querySelectorAll(`#${id} .result-txt`)].map(e=>e.innerText).join('\n\n---\n\n');
+  navigator.clipboard.writeText(t).catch(()=>{});
+}
+
+// ================================================================
+// HISTORY
+// ================================================================
+let genCount=0;
+function incGen(){
+  genCount++;
+  const el=document.getElementById('h-gen-count');
+  if(el)el.textContent=genCount+' génération'+(genCount>1?'s':'');
+}
+
+function saveHist(type,preview,plat,goal){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  h.unshift({type,preview:(preview||'').substring(0,200),plat,goal,date:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  if(h.length>100)h.pop();
+  localStorage.setItem('lf_hist',JSON.stringify(h));
+  const badge=document.getElementById('hist-badge');
+  const sideBarBadge=document.getElementById('sidebar-hist-badge');
+  if(badge){badge.textContent=h.length;badge.style.display='block'}
+  if(sideBarBadge)sideBarBadge.style.display='block';
+}
+
+function renderHist(){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  const info=document.getElementById('hist-info');if(info)info.textContent=h.length+' génération'+(h.length!==1?'s':'');
+  const list=document.getElementById('hist-list');if(!list)return;
+  if(!h.length){list.innerHTML='<div class="empty"><div class="empty-ico">⏱</div><div class="empty-txt">Aucune génération<br>pour l\'instant</div></div>';return}
+  list.innerHTML=h.map(e=>`
+    <div class="hist-item">
+      <div class="hist-meta"><span class="hist-type">${e.type}</span><span class="hist-date">${e.date}</span></div>
+      <div class="hist-prev">${e.preview||'—'}</div>
+      <div class="hist-tags">${e.plat?`<span class="hist-tag">${e.plat}</span>`:''}<span class="hist-tag">${e.goal||''}</span></div>
+    </div>`).join('');
+}
+
+function clearHist(){
+  if(!confirm('Vider tout l\'historique ?'))return;
+  localStorage.removeItem('lf_hist');renderHist();
+  const badge=document.getElementById('hist-badge');if(badge)badge.style.display='none';
+  const sb=document.getElementById('sidebar-hist-badge');if(sb)sb.style.display='none';
+}
+
+function exportCSV(){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  if(!h.length){alert('Aucune génération à exporter');return}
+  const csv='Type,Date,Plateforme,Objectif,Aperçu\n'+h.map(e=>`"${e.type}","${e.date}","${e.plat||''}","${e.goal||''}","${(e.preview||'').replace(/"/g,"'")}"`).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='legalforce-contenu.csv';a.click();
+}
+
+// ================================================================
+// DRAG & DROP ZONE
+// ================================================================
+const dz=document.getElementById('dz');
+if(dz){
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');const f=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));addSlides(f)});
+}
+
+// ================================================================
+// INIT
+// ================================================================
+loadSettings();
+renderHist();
+const h0=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+if(h0.length){
+  const badge=document.getElementById('hist-badge');if(badge){badge.textContent=h0.length;badge.style.display='block'}
+  const sb=document.getElementById('sidebar-hist-badge');if(sb)sb.style.display='block';
+}
+</script>
+</body>
+</html>
