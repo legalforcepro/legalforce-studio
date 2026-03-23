@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LegalForce Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0f0f2a;
+  --ink2:#1a1a3e;
+  --ink3:#13132e;
+  --surface:#1a1a3e;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --v:#6c5ce7;
+  --v2:#a29bfe;
+  --r:#e63946;
+  --g:#4ade80;
+  --gld:#f4a261;
+  --txt:#e8e8f0;
+  --txt2:rgba(232,232,240,0.55);
+  --txt3:rgba(232,232,240,0.3);
+  --font-display:'Sora',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 2px 20px rgba(0,0,0,0.4);
+  --shadow-lg:0 8px 48px rgba(0,0,0,0.6);
+  --glow:0 0 30px rgba(108,92,231,0.15);
+}
+html{height:100%;font-size:16px}
+body{
+  background:var(--ink);
+  color:var(--txt);
+  font-family:var(--font-body);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════
+   GRAIN TEXTURE OVERLAY
+═══════════════════════════════════════════ */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.022;
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.header{
+  height:52px;
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  flex-shrink:0;
+  position:relative;
+  z-index:100;
+}
+.logo{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:18px;
+  letter-spacing:-0.5px;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.logo-dot{color:var(--r)}
+.logo-tag{
+  font-size:9px;
+  font-weight:700;
+  background:linear-gradient(135deg,var(--v),var(--v2));
+  color:#fff;
+  padding:2px 8px;
+  border-radius:20px;
+  font-family:var(--font-display);
+  letter-spacing:0.5px;
+}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-stat{
+  font-size:10px;
+  color:var(--txt3);
+  font-family:var(--font-display);
+  font-weight:700;
+}
+.header-stat span{color:var(--v2)}
+.icon-btn{
+  width:32px;height:32px;
+  border-radius:8px;
+  border:1px solid var(--border2);
+  background:transparent;
+  color:var(--txt2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.icon-btn:hover{background:var(--surface);color:var(--txt)}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app{
+  display:flex;
+  flex:1;
+  overflow:hidden;
+  min-height:0;
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+.sidebar{
+  width:60px;
+  background:var(--ink2);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:12px 0;
+  gap:4px;
+  flex-shrink:0;
+  overflow:hidden;
+}
+@media(min-width:768px){
+  .sidebar{width:220px;align-items:stretch;padding:12px 8px}
+}
+.nav-item{
+  width:44px;height:44px;
+  border-radius:11px;
+  border:none;
+  background:transparent;
+  color:var(--txt3);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+  position:relative;
+  flex-shrink:0;
+}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+@media(min-width:768px){
+  .nav-item{width:100%;height:40px;justify-content:flex-start;padding:0 10px;gap:10px;font-family:var(--font-body);font-size:13px;font-weight:500}
+}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--txt)}
+.nav-item.active{background:rgba(108,92,231,0.12);color:var(--v2)}
+.nav-item .nav-label{display:none}
+@media(min-width:768px){.nav-item .nav-label{display:block}}
+.nav-badge{
+  position:absolute;top:6px;right:6px;
+  background:var(--r);color:#fff;
+  font-size:8px;font-weight:800;
+  padding:1px 5px;border-radius:20px;
+  font-family:var(--font-display);
+  min-width:16px;text-align:center;
+}
+@media(min-width:768px){
+  .nav-badge{position:static;margin-left:auto;top:auto;right:auto}
+}
+.nav-section{
+  display:none;
+  font-size:9px;
+  font-weight:700;
+  color:var(--txt3);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  padding:8px 10px 4px;
+  font-family:var(--font-display);
+}
+@media(min-width:768px){.nav-section{display:block}}
+.sidebar-footer{
+  margin-top:auto;
+  display:none;
+  padding:10px 8px;
+  border-top:1px solid var(--border);
+}
+@media(min-width:768px){.sidebar-footer{display:block}}
+.sidebar-footer-txt{font-size:10px;color:var(--txt3);line-height:1.6}
+.sidebar-footer-txt strong{color:var(--v2)}
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+.main{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px;
+  padding-bottom:100px;
+}
+@media(min-width:768px){
+  .main{padding:24px;padding-bottom:24px}
+}
+.page{display:none;animation:fadeSlide .2s ease both}
+.page.active{display:block}
+@keyframes fadeSlide{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════ */
+.page-header{margin-bottom:20px}
+.page-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:22px;
+  letter-spacing:-0.5px;
+  color:#fff;
+  margin-bottom:4px;
+}
+.page-title em{color:var(--v2);font-style:normal}
+.page-subtitle{font-size:12px;color:var(--txt2);line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card{
+  background:var(--ink3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:12px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.card-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:13px;
+  color:#fff;
+}
+.card-tag{
+  font-size:9px;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:20px;
+  font-family:var(--font-display);
+  letter-spacing:.3px;
+}
+.tag-new{background:rgba(230,57,70,0.15);color:var(--r);border:1px solid rgba(230,57,70,0.2)}
+.tag-ai{background:rgba(108,92,231,0.15);color:var(--v2);border:1px solid rgba(108,92,231,0.2)}
+.tag-live{background:rgba(74,222,128,0.15);color:var(--g);border:1px solid rgba(74,222,128,0.2)}
+
+/* ═══════════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════════ */
+.field-label{
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  font-family:var(--font-display);
+  color:var(--txt3);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  margin-bottom:6px;
+  margin-top:12px;
+}
+.field-label:first-child{margin-top:0}
+input[type=text],textarea,select{
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-sm);
+  color:var(--txt);
+  font-family:var(--font-body);
+  font-size:14px;
+  padding:10px 13px;
+  outline:none;
+  transition:border-color .15s,background .15s;
+  -webkit-appearance:none;
+  appearance:none;
+  margin-bottom:0;
+}
+input[type=text]:focus,textarea:focus,select:focus{
+  border-color:var(--v);
+  background:rgba(108,92,231,0.05);
+}
+textarea{resize:none;min-height:72px;line-height:1.55}
+select option{background:var(--ink3)}
+
+/* ═══════════════════════════════════════════
+   PILLS / CHIPS
+═══════════════════════════════════════════ */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pill{
+  padding:6px 13px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  font-family:var(--font-display);
+  cursor:pointer;
+  border:1px solid var(--border2);
+  background:transparent;
+  color:var(--txt2);
+  transition:all .15s;
+  white-space:nowrap;
+}
+.pill:hover{border-color:var(--v);color:var(--v2)}
+.pill.on{background:rgba(108,92,231,0.15);color:var(--v2);border-color:var(--v)}
+.pill.on-r{background:rgba(230,57,70,0.12);color:var(--r);border-color:rgba(230,57,70,0.3)}
+.pill.on-g{background:rgba(74,222,128,0.12);color:var(--g);border-color:rgba(74,222,128,0.3)}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;
+  padding:13px 18px;
+  border-radius:var(--radius-sm);
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:.2px;
+  cursor:pointer;
+  border:none;
+  transition:all .15s;
+  position:relative;
+  overflow:hidden;
+}
+.btn::after{
+  content:'';
+  position:absolute;inset:0;
+  background:rgba(255,255,255,0);
+  transition:background .15s;
+}
+.btn:hover::after{background:rgba(255,255,255,0.06)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn-primary{
+  background:linear-gradient(135deg,var(--v),#5a4fdd);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(108,92,231,0.3);
+}
+.btn-danger{
+  background:linear-gradient(135deg,var(--r),#c02535);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(230,57,70,0.25);
+}
+.btn-ghost{
+  background:rgba(255,255,255,0.05);
+  color:var(--txt);
+  border:1px solid var(--border2);
+}
+.btn-ghost:hover::after{background:rgba(255,255,255,0.04)}
+.btn-sm{
+  padding:7px 13px;
+  font-size:11px;
+  border-radius:7px;
+  width:auto;
+}
+.btn-icon-sm{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:6px 12px;
+  border-radius:7px;
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:10px;
+  cursor:pointer;
+  border:1px solid var(--border2);
+  background:rgba(255,255,255,0.04);
+  color:var(--txt2);
+  transition:all .15s;
+  white-space:nowrap;
+}
+.btn-icon-sm:hover{background:rgba(108,92,231,0.1);color:var(--v2);border-color:var(--v)}
+.btn-icon-sm.copied{background:rgba(74,222,128,0.12);color:var(--g);border-color:rgba(74,222,128,0.3)}
+
+/* ═══════════════════════════════════════════
+   UPLOAD ZONE
+═══════════════════════════════════════════ */
+.upload-zone{
+  border:2px dashed rgba(108,92,231,0.25);
+  border-radius:var(--radius);
+  padding:28px 16px;
+  text-align:center;
+  background:rgba(108,92,231,0.03);
+  cursor:pointer;
+  position:relative;
+  transition:all .2s;
+  margin-bottom:4px;
+}
+.upload-zone:hover,.upload-zone.drag-over{
+  border-color:var(--v);
+  background:rgba(108,92,231,0.07);
+}
+.upload-zone input[type=file]{
+  position:absolute;inset:0;
+  opacity:0;cursor:pointer;
+  width:100%;height:100%;
+}
+.upload-icon{
+  width:44px;height:44px;
+  background:rgba(108,92,231,0.1);
+  border:1px solid rgba(108,92,231,0.2);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;
+  color:var(--v2);
+}
+.upload-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:14px;
+  color:#fff;
+  margin-bottom:5px;
+}
+.upload-sub{font-size:11px;color:var(--txt3);line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   SLIDES GRID
+═══════════════════════════════════════════ */
+.slides-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.slides-count{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:12px;
+  color:#fff;
+}
+.slides-count span{color:var(--v2)}
+.slides-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:8px;
+}
+@media(min-width:480px){
+  .slides-grid{grid-template-columns:repeat(4,1fr)}
+}
+.slide-thumb{
+  position:relative;
+  border-radius:8px;
+  overflow:hidden;
+  border:2px solid var(--border);
+  background:var(--ink2);
+  aspect-ratio:1;
+  transition:border-color .15s;
+}
+.slide-thumb:hover{border-color:var(--v)}
+.slide-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.slide-num{
+  position:absolute;top:4px;left:4px;
+  background:var(--v);color:#fff;
+  font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:5px;
+  font-family:var(--font-display);
+}
+.slide-rm{
+  position:absolute;top:4px;right:4px;
+  background:rgba(230,57,70,0.85);
+  border:none;border-radius:5px;
+  color:#fff;font-size:12px;
+  width:20px;height:20px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;
+}
+.slide-thumb:hover .slide-rm{opacity:1}
+.slide-mv{
+  position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  display:flex;gap:2px;
+  opacity:0;transition:opacity .15s;
+}
+.slide-thumb:hover .slide-mv{opacity:1}
+.slide-mv button{
+  background:rgba(0,0,0,0.7);
+  border:none;border-radius:4px;
+  color:#fff;font-size:11px;
+  width:20px;height:20px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.carousel-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(244,162,97,0.1);
+  border:1px solid rgba(244,162,97,0.2);
+  border-radius:20px;
+  color:var(--gld);
+  font-size:10px;font-weight:700;
+  padding:3px 10px;
+  font-family:var(--font-display);
+  margin-bottom:10px;
+}
+.carousel-badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gld);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══════════════════════════════════════════
+   ALGO TIP
+═══════════════════════════════════════════ */
+.algo-tip{
+  background:rgba(244,162,97,0.06);
+  border:1px solid rgba(244,162,97,0.15);
+  border-radius:var(--radius-sm);
+  padding:10px 13px;
+  font-size:11px;
+  color:rgba(244,162,97,0.85);
+  line-height:1.55;
+  margin-top:10px;
+}
+.algo-tip strong{color:var(--gld)}
+
+/* ═══════════════════════════════════════════
+   LOADING
+═══════════════════════════════════════════ */
+.loading-state{
+  text-align:center;
+  padding:36px 20px;
+}
+.loader{
+  width:32px;height:32px;
+  border:2px solid var(--border2);
+  border-top-color:var(--v);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin:0 auto 14px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:14px;
+  color:#fff;
+  margin-bottom:4px;
+}
+.loading-sub{font-size:11px;color:var(--v2)}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════ */
+.empty-state{
+  text-align:center;
+  padding:36px 20px;
+  color:var(--txt3);
+}
+.empty-icon{font-size:32px;margin-bottom:10px;opacity:.4}
+.empty-title{font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--txt2);margin-bottom:5px}
+.empty-sub{font-size:12px;line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   ERROR
+═══════════════════════════════════════════ */
+.err-box{
+  background:rgba(230,57,70,0.07);
+  border:1px solid rgba(230,57,70,0.2);
+  border-radius:var(--radius-sm);
+  padding:13px;
+  font-size:12px;
+  color:#ff8087;
+  line-height:1.6;
+}
+.err-box strong{color:var(--r)}
+
+/* ═══════════════════════════════════════════
+   RESULT BLOCKS
+═══════════════════════════════════════════ */
+.result-wrap{margin-top:12px}
+.result-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+  gap:8px;
+}
+.result-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:15px;
+  color:#fff;
+}
+.result-actions{display:flex;gap:6px;flex-wrap:wrap}
+.rblock{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  margin-bottom:10px;
+  transition:border-color .2s;
+}
+.rblock:hover{border-color:var(--border2)}
+.rblock.hero{
+  border-color:rgba(108,92,231,0.3);
+  background:rgba(108,92,231,0.04);
+  box-shadow:var(--glow);
+}
+.rblock.coherent{
+  border-color:rgba(74,222,128,0.25);
+  background:rgba(74,222,128,0.03);
+}
+.rblock.caption{
+  border-color:rgba(244,162,97,0.25);
+  background:rgba(244,162,97,0.03);
+}
+.rblock-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:8px;margin-bottom:8px;
+}
+.rblock-label{
+  font-size:9px;
+  font-weight:800;
+  font-family:var(--font-display);
+  color:var(--v2);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  line-height:1.4;
+}
+.rblock-label.green{color:var(--g)}
+.rblock-label.gold{color:var(--gld)}
+.rblock-role{font-size:10px;color:var(--txt3);margin-top:2px}
+.rblock-text{
+  font-size:13px;
+  line-height:1.75;
+  color:rgba(232,232,240,0.9);
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.rblock-tip{
+  font-size:10px;
+  color:rgba(244,162,97,0.7);
+  margin-top:8px;
+  line-height:1.5;
+  display:flex;align-items:flex-start;gap:5px;
+}
+/* char bar */
+.char-bar{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05)}
+.char-info{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:4px}
+.char-track{height:2px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.char-fill{height:100%;border-radius:2px}
+/* score */
+.score-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  border-top:1px solid rgba(255,255,255,0.05);
+  margin-top:8px;
+}
+.score-label{font-size:10px;color:var(--txt3);min-width:75px;font-family:var(--font-display);font-weight:600}
+.score-track{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.score-val{font-size:11px;font-weight:800;font-family:var(--font-display);min-width:38px;text-align:right}
+/* retouche */
+.retouche-panel{
+  margin-top:10px;
+  padding:11px;
+  background:rgba(108,92,231,0.06);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:var(--radius-sm);
+}
+.retouche-label{
+  font-size:9px;font-weight:800;color:var(--v2);
+  font-family:var(--font-display);text-transform:uppercase;letter-spacing:.7px;
+  margin-bottom:7px;
+  display:flex;align-items:center;gap:5px;
+}
+.retouche-row{display:flex;gap:6px}
+.retouche-input{flex:1;font-size:13px;min-height:36px;padding:8px 11px;margin:0}
+.retouche-row .btn{width:auto;padding:8px 14px;font-size:12px}
+
+/* slide result */
+.slide-result{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-bottom:10px;
+}
+.slide-result-header{
+  padding:12px 14px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background .15s;
+}
+.slide-result-header:hover{background:rgba(255,255,255,0.02)}
+.slide-result-thumb{
+  width:38px;height:38px;
+  border-radius:6px;
+  object-fit:cover;flex-shrink:0;
+}
+.slide-result-info{flex:1;min-width:0}
+.slide-result-title{
+  font-family:var(--font-display);font-weight:800;font-size:12px;color:#fff;
+}
+.slide-result-sub{font-size:10px;color:var(--txt3);margin-top:2px}
+.slide-result-body{display:none;padding:12px 14px}
+.slide-result-body.open{display:block}
+.slide-chevron{color:var(--txt3);font-size:14px;transition:transform .2s;flex-shrink:0}
+.slide-result-header.open .slide-chevron{transform:rotate(90deg)}
+
+/* hashtag box */
+.hashtag-box{
+  background:rgba(108,92,231,0.05);
+  border:1px solid rgba(108,92,231,0.12);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  margin-top:10px;
+}
+.hashtag-title{
+  font-size:9px;font-weight:800;color:var(--v2);
+  font-family:var(--font-display);text-transform:uppercase;letter-spacing:.7px;
+  margin-bottom:8px;
+}
+.hashtag-list{display:flex;flex-wrap:wrap;gap:5px}
+.htag{
+  font-size:11px;color:var(--v2);
+  background:rgba(108,92,231,0.1);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:5px;padding:3px 8px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.htag:hover{background:rgba(108,92,231,0.2)}
+
+/* ═══════════════════════════════════════════
+   SUBJECTS
+═══════════════════════════════════════════ */
+.subjects-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:12px 0;
+}
+.subject-card{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  cursor:pointer;
+  transition:all .15s;
+  position:relative;
+  overflow:hidden;
+}
+.subject-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  opacity:0;
+  transition:opacity .15s;
+}
+.subject-card:hover{border-color:var(--border2);background:rgba(255,255,255,0.02)}
+.subject-card:hover::before{opacity:1}
+.subject-card.sel{border-color:var(--v);background:rgba(108,92,231,0.07)}
+.subject-card.sel::before{background:var(--v);opacity:1}
+.s-type{
+  font-size:8px;font-weight:800;
+  font-family:var(--font-display);text-transform:uppercase;letter-spacing:.8px;
+  display:inline-block;padding:2px 7px;border-radius:4px;margin-bottom:6px;
+}
+.s-type.tofu{background:rgba(108,92,231,0.15);color:var(--v2)}
+.s-type.mofu{background:rgba(244,162,97,0.15);color:var(--gld)}
+.s-type.bofu{background:rgba(74,222,128,0.15);color:var(--g)}
+.s-type.mre{background:rgba(230,57,70,0.15);color:var(--r)}
+.subject-title{font-size:12px;font-weight:600;line-height:1.4;color:rgba(232,232,240,0.88)}
+.s-check{
+  position:absolute;top:8px;right:8px;
+  background:var(--v);color:#fff;
+  font-size:8px;font-weight:800;
+  padding:2px 6px;border-radius:4px;
+  font-family:var(--font-display);
+  display:none;
+}
+.subject-card.sel .s-check{display:block}
+
+/* selected subject info */
+.sel-subject-info{
+  background:rgba(108,92,231,0.07);
+  border:1px solid rgba(108,92,231,0.2);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  margin-top:10px;
+  display:none;
+}
+.sel-subject-info.show{display:block}
+.sel-subject-label{
+  font-size:9px;font-weight:800;color:var(--v2);
+  font-family:var(--font-display);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;
+}
+.sel-subject-txt{font-size:13px;font-weight:600;color:#fff;line-height:1.4}
+
+/* ═══════════════════════════════════════════
+   CHAT
+═══════════════════════════════════════════ */
+.chat-window{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:12px;
+  max-height:52vh;
+  overflow-y:auto;
+  padding-right:2px;
+}
+.chat-window::-webkit-scrollbar{width:3px}
+.chat-window::-webkit-scrollbar-track{background:transparent}
+.chat-window::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.msg{
+  max-width:88%;
+  padding:11px 14px;
+  border-radius:14px;
+  font-size:13px;
+  line-height:1.65;
+}
+.msg.user{
+  background:linear-gradient(135deg,var(--v),#5a4fdd);
+  color:#fff;
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.msg.ai{
+  background:var(--ink3);
+  border:1px solid var(--border2);
+  align-self:flex-start;
+  border-bottom-left-radius:4px;
+  color:rgba(232,232,240,0.9);
+}
+.msg.ai.thinking{color:var(--txt3);font-style:italic}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end}
+.chat-input-row textarea{
+  flex:1;min-height:44px;max-height:120px;
+  border-radius:12px;font-size:14px;
+  padding:10px 14px;margin:0;
+  line-height:1.5;
+}
+.chat-send{
+  width:44px;height:44px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v),#5a4fdd);
+  border:none;border-radius:12px;
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .15s;
+  box-shadow:0 4px 15px rgba(108,92,231,0.3);
+}
+.chat-send:hover{opacity:.88}
+
+/* ═══════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════ */
+.hist-item{
+  background:var(--ink3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:border-color .15s;
+}
+.hist-item:hover{border-color:var(--border2)}
+.hist-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.hist-type{
+  font-size:9px;font-weight:800;color:var(--v2);
+  font-family:var(--font-display);text-transform:uppercase;letter-spacing:.7px;
+}
+.hist-date{font-size:10px;color:var(--txt3)}
+.hist-preview{
+  font-size:12px;color:rgba(232,232,240,0.6);line-height:1.5;
+  overflow:hidden;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.hist-tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.hist-tag{
+  background:rgba(108,92,231,0.08);color:var(--v2);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:5px;font-size:9px;font-weight:700;
+  padding:2px 7px;font-family:var(--font-display);
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+.setting-row{
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.setting-row:last-child{border:none}
+.setting-lbl{font-size:13px;font-weight:500;color:var(--txt)}
+.setting-sub{font-size:10px;color:var(--txt3);margin-top:2px}
+.color-pick{
+  width:36px;height:36px;border-radius:8px;
+  border:2px solid var(--border2);cursor:pointer;
+  padding:2px;-webkit-appearance:none;appearance:none;
+  background:transparent;
+}
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV (mobile)
+═══════════════════════════════════════════ */
+.bottom-nav{
+  display:flex;
+  background:rgba(10,10,15,0.97);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+@media(min-width:768px){.bottom-nav{display:none}}
+.bnav-btn{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:8px 4px;
+  border:none;background:transparent;
+  color:var(--txt3);font-size:9px;font-weight:700;
+  font-family:var(--font-display);cursor:pointer;
+  transition:color .15s;
+  position:relative;
+}
+.bnav-btn.active{color:var(--v2)}
+.bnav-btn svg{width:20px;height:20px}
+.bnav-badge{
+  position:absolute;top:5px;right:calc(50% - 14px);
+  background:var(--r);color:#fff;
+  font-size:8px;font-weight:800;
+  padding:1px 4px;border-radius:8px;
+  font-family:var(--font-display);
+  min-width:14px;text-align:center;
+  display:none;
+}
+.bnav-badge.show{display:block}
+
+/* ═══════════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════════ */
+.divider{height:1px;background:var(--border);margin:12px 0}
+
+/* ═══════════════════════════════════════════
+   PACK SECTIONS
+═══════════════════════════════════════════ */
+.pack-section{margin-bottom:16px}
+.pack-section-title{
+  font-family:var(--font-display);font-weight:800;font-size:11px;
+  color:var(--gld);
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+
+/* ═══════════════════════════════════════════
+   TOGGLE
+═══════════════════════════════════════════ */
+.toggle-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12px;color:var(--txt2)}
+.toggle-track{
+  width:30px;height:17px;
+  background:rgba(255,255,255,0.1);
+  border-radius:9px;position:relative;
+  cursor:pointer;flex-shrink:0;transition:background .2s;
+}
+.toggle-track.on{background:var(--v)}
+.toggle-thumb{
+  width:13px;height:13px;background:#fff;
+  border-radius:50%;position:absolute;
+  top:2px;left:2px;transition:left .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.toggle-track.on .toggle-thumb{left:15px}
+
+/* ═══════════════════════════════════════════
+   UPLOAD DB FILE
+═══════════════════════════════════════════ */
+.db-file-result{margin-top:10px}
+.extracted-field{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:10px;
+  margin-bottom:6px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+}
+.ef-label{font-size:9px;font-weight:800;color:var(--v2);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.ef-val{font-size:12px;color:rgba(232,232,240,0.8);line-height:1.4;flex:1}
+
+/* ═══════════════════════════════════════════
+   IMG GEN
+═══════════════════════════════════════════ */
+.gen-preview-wrap{margin-top:10px}
+.gen-preview-wrap img{
+  width:100%;border-radius:var(--radius);
+  border:1px solid var(--border);
+  display:block;margin-bottom:8px;
+}
+.gen-actions{display:flex;gap:7px}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE GRID
+═══════════════════════════════════════════ */
+.grid2{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+}
+@media(min-width:900px){
+  .grid2{grid-template-columns:400px 1fr}
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+.main::-webkit-scrollbar{width:3px}
+.main::-webkit-scrollbar-track{background:transparent}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">LegalForce<span class="logo-dot">.</span><span class="logo-tag">STUDIO</span></div>
+  <div class="header-right">
+    <div class="header-stat" id="h-stat"></div>
+    <button class="icon-btn" id="header-api-btn" onclick="showAPIKeyModal()" title="Configurer la clé API" style="display:none">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </button>
+    <button class="icon-btn" onclick="showPage('settings')" title="Paramètres">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR (desktop) -->
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-section">Génération</div>
+    <button class="nav-item active" data-page="analyse" onclick="showPage('analyse')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span class="nav-label">Analyse template</span>
+    </button>
+    <button class="nav-item" data-page="sujets" onclick="showPage('sujets')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span class="nav-label">Sujets frais</span>
+    </button>
+    <button class="nav-item" data-page="chat" onclick="showPage('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="nav-label">Chat IA</span>
+    </button>
+    <div class="nav-section" style="margin-top:8px">Gestion</div>
+    <button class="nav-item" data-page="history" onclick="showPage('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="nav-label">Historique</span>
+      <span class="nav-badge" id="hist-badge-nav" style="display:none">0</span>
+    </button>
+    <button class="nav-item" data-page="settings" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <span class="nav-label">Base de données</span>
+    </button>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-txt">
+        Claude <strong>Sonnet 4</strong><br>
+        Contexte LegalForce intégré<br>
+        Historique local · Illimité
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+
+    <!-- ══════ PAGE : ANALYSE ══════ -->
+    <div class="page active" id="page-analyse">
+      <div class="page-header">
+        <div class="page-title">Analyse <em>template</em></div>
+        <div class="page-subtitle">Upload 1 image ou un carrousel — l'IA détecte, comprend et réécrit en cohérence</div>
+      </div>
+      <div class="grid2">
+        <div>
+          <!-- Upload -->
+          <div class="card">
+            <div id="upload-area">
+              <div class="upload-zone" id="dropzone" ondragover="ev.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+                <input type="file" accept="image/*" multiple id="file-input" onchange="handleFiles(event)">
+                <div class="upload-icon" style="display:flex;align-items:center;justify-content:center">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="upload-title">Upload ton template Canva</div>
+                <div class="upload-sub">1 image ou plusieurs slides carrousel<br>PNG · JPG · WebP — glisse ou clique</div>
+              </div>
+            </div>
+            <div id="slides-area" style="display:none">
+              <div class="slides-header">
+                <div class="slides-count" id="slides-count">0 slide(s)</div>
+                <button class="btn-icon-sm" onclick="clearSlides()">× Tout effacer</button>
+              </div>
+              <div id="carousel-badge" style="display:none">
+                <div class="carousel-badge"><div class="carousel-badge-dot"></div>Carrousel détecté — analyse cohérente activée</div>
+              </div>
+              <div class="slides-grid" id="slides-grid"></div>
+              <div style="font-size:10px;color:var(--txt3);text-align:center;margin-bottom:4px">⬅ ➡ pour réorganiser l'ordre</div>
+            </div>
+          </div>
+
+          <!-- Config -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Configuration</div>
+            </div>
+
+            <div class="field-label">Plateforme</div>
+            <div class="pills" id="plat-pills">
+              <button class="pill on" onclick="selPill(this,'plat','instagram')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> Instagram</span></button>
+              <button class="pill" onclick="selPill(this,'plat','tiktok')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg> TikTok</span></button>
+              <button class="pill" onclick="selPill(this,'plat','linkedin')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg> LinkedIn</span></button>
+              <button class="pill" onclick="selPill(this,'plat','facebook')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg> Facebook</span></button>
+              <button class="pill" onclick="selPill(this,'plat','story')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg> Story</span></button>
+              <button class="pill" onclick="selPill(this,'plat','whatsapp')"><span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> WhatsApp</span></button>
+            </div>
+            <div class="algo-tip" id="algo-tip">
+              <strong>Instagram 2026 :</strong> Hook obligatoire dans les 125 premiers chars · 3-5 hashtags max · Les carrousels génèrent 3× plus de portée · Favorise les sauvegardes avec du contenu éducatif
+            </div>
+
+            <div class="field-label" style="margin-top:12px">Objectif</div>
+            <div class="pills" id="obj-pills">
+              <button class="pill on on-r" onclick="selPill(this,'obj','tofu')">TOFU — Notoriété</button>
+              <button class="pill" onclick="selPill(this,'obj','mofu')">MOFU — Considération</button>
+              <button class="pill on-g" onclick="selPill(this,'obj','bofu')">BOFU — Conversion</button>
+              <button class="pill" onclick="selPill(this,'obj','mre')">MRE</button>
+            </div>
+            <div id="obj-explain" style="font-size:11px;color:var(--txt3);margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:7px;line-height:1.6">
+              <strong style="color:var(--txt2)">TOFU</strong> — Audience froide. Objectif : capter l'attention, créer de la notoriété. Contenu éducatif, chiffres-chocs, questions intrigantes.
+            </div>
+
+            <div class="field-label" style="margin-top:12px">Structure juridique</div>
+            <select id="struct-sel">
+              <option value="general">Toutes structures LegalForce</option>
+              <option value="sarl">SARL / SARLAU — à partir de 3 900 DH</option>
+              <option value="sas">SAS / SASU — à partir de 4 900 DH</option>
+              <option value="succursale">Succursale — à partir de 5 900 DH</option>
+              <option value="filiale">Filiale — à partir de 12 900 DH</option>
+              <option value="sa">SA — à partir de 14 900 DH</option>
+            </select>
+
+            <div class="field-label">Sujet spécifique (optionnel)</div>
+            <input type="text" id="custom-subject" placeholder="Ex : MRE souhaitant créer au Maroc, SARL vs SAS...">
+
+            <div class="toggle-row" style="margin-top:10px">
+              <div class="toggle-track" id="toggle-darija" onclick="toggleDarija()"><div class="toggle-thumb"></div></div>
+              Inclure version darija
+            </div>
+
+            <button class="btn btn-primary" id="btn-analyse" onclick="doAnalyse()" disabled style="margin-top:12px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              Analyser et réécrire
+            </button>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div id="out-analyse">
+          <div class="empty-state">
+            <div class="empty-icon" style="opacity:.35"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <div class="empty-title">Upload un template pour commencer</div>
+            <div class="empty-sub">L'IA analyse chaque zone de texte<br>et réécrit avec le niveau d'un expert copywriter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ PAGE : SUJETS ══════ -->
+    <div class="page" id="page-sujets">
+      <div class="page-header">
+        <div class="page-title">Sujets <em>frais</em></div>
+        <div class="page-subtitle">20 sujets générés par l'IA connectée à l'actualité marocaine — variés, psychologiquement optimisés pour convertir</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Générateur de sujets IA</div>
+          <div class="card-tag tag-live" id="actu-badge">● Temps réel</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:10px;color:var(--txt3)" id="subjects-mem-stat">Aucun sujet en mémoire</span>
+          <button class="btn-icon-sm" onclick="clearUsedSubjects()" title="Effacer la mémoire des sujets">↺ Reset mémoire</button>
+        </div>
+        <button class="btn btn-primary" onclick="loadSubjects()" id="btn-subjects">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Générer 20 sujets frais
+        </button>
+        <div id="subjects-loading" class="loading-state" style="display:none">
+          <div class="loader"></div>
+          <div class="loading-title">Connexion à l'actualité marocaine...</div>
+          <div class="loading-sub">Recherche des tendances du moment</div>
+        </div>
+        <div id="subjects-grid" class="subjects-grid" style="display:none"></div>
+        <div id="sel-subject-info" class="sel-subject-info">
+          <div class="sel-subject-label">Sujet sélectionné</div>
+          <div id="sel-subject-txt" class="sel-subject-txt"></div>
+          <button class="btn btn-primary" style="margin-top:10px" onclick="goAnalyseWithSubject()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            Utiliser ce sujet
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Ou entre ton propre sujet</div>
+        <input type="text" id="manual-subject" placeholder="Ex : Créer sa SARL depuis la France, SARL vs SAS...">
+        <div class="pills" id="manual-obj-pills" style="margin-top:8px">
+          <button class="pill on" onclick="selPill(this,'manual-obj','tofu')">TOFU</button>
+          <button class="pill" onclick="selPill(this,'manual-obj','mofu')">MOFU</button>
+          <button class="pill" onclick="selPill(this,'manual-obj','bofu')">BOFU</button>
+          <button class="pill" onclick="selPill(this,'manual-obj','mre')">MRE</button>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px" onclick="useManualSubject()">
+          Générer avec ce sujet →
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════ PAGE : CHAT ══════ -->
+    <div class="page" id="page-chat">
+      <div class="page-header">
+        <div class="page-title">Assistant <em>IA</em></div>
+        <div class="page-subtitle">Parle-lui comme à un collègue expert — il connaît tout LegalForce, chaque structure, chaque cible</div>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="chat-window" id="chat-messages">
+          <div class="msg ai">Salam ! Je suis l'assistant LegalForce Studio.<br><br>Je connais tous tes produits, tes prix, tes cibles et les algorithmes de chaque réseau social. Dis-moi ce que tu veux créer — caption, script Reel, post MRE, pack complet... Je m'occupe de tout avec un niveau d'expertise élevé. </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" placeholder="Ex : Fais-moi un post Instagram percutant pour les MRE en France qui veulent créer leur SARL au Maroc..." rows="1" oninput="autoResize(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+          <button class="chat-send" onclick="sendChat()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ PAGE : HISTORY ══════ -->
+    <div class="page" id="page-history">
+      <div class="page-header">
+        <div class="page-title"><em>Historique</em></div>
+        <div class="page-subtitle">Toutes tes générations sauvegardées localement</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:12px;color:var(--txt3)" id="hist-info">0 génération</span>
+        <div style="display:flex;gap:7px">
+          <button class="btn-icon-sm" onclick="exportCSV()">↓ CSV</button>
+          <button class="btn-icon-sm" onclick="clearHist()">× Vider</button>
+        </div>
+      </div>
+      <div id="hist-list">
+        <div class="empty-state">
+          <div class="empty-icon" style="opacity:.35"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="empty-title">Aucune génération pour l'instant</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ PAGE : SETTINGS ══════ -->
+    <div class="page" id="page-settings">
+      <div id="autosave-indicator" style="position:fixed;bottom:80px;right:16px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.25);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--g);font-family:var(--font-display);font-weight:600;opacity:0;transition:opacity 0.4s;pointer-events:none;z-index:100;letter-spacing:.3px">✓ Sauvegardé automatiquement</div>
+      <div class="page-header">
+        <div class="page-title">Base de données <em>marque</em></div>
+        <div class="page-subtitle">Ces informations sont injectées dans chaque génération. Modifie et sauvegarde — tout se met à jour.</div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;border-color:rgba(108,92,231,0.3)">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title" style="display:flex;align-items:center;gap:6px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Clé API Anthropic
+          </div>
+          <div class="card-tag tag-ai">Requis</div>
+        </div>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.6">
+          Nécessaire pour toutes les générations. 
+          <a href="https://console.anthropic.com" target="_blank" style="color:var(--v2)">console.anthropic.com</a> → API Keys → Create Key<br>
+          <span style="color:var(--txt3);font-size:10px">Stockée uniquement dans ton navigateur, jamais envoyée ailleurs.</span>
+        </div>
+        <div class="field-label">Clé API (sk-ant-...)</div>
+        <input type="password" id="settings-api-key" placeholder="sk-ant-api03-..." style="font-family:monospace;font-size:12px;margin-bottom:8px" oninput="updateAPIKeyStatus();autoSave()">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;padding:10px" onclick="saveAPIKeyFromSettings()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+            Enregistrer
+          </button>
+          <button class="btn btn-ghost" style="flex:1;padding:10px" onclick="testAPIKey()">Tester la clé</button>
+        </div>
+        <div id="api-key-settings-status" style="margin-top:8px;font-size:11px;display:none"></div>
+      </div>
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:12px;font-size:11px;color:rgba(74,222,128,0.8);display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0"></div>
+        Sauvegardée localement — fonctionne hors connexion
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"><span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Identité</span></div>
+        <div class="field-label">Nom de marque</div>
+        <input type="text" id="set-brand" value="LegalForce" oninput="autoSave()">
+        <div class="field-label">Slogan</div>
+        <input type="text" id="set-slogan" value="Créez votre société au Maroc en 7 à 15 jours, 100% en ligne" oninput="autoSave()">
+        <div class="field-label">Positionnement</div>
+        <input type="text" id="set-positioning" value="Le Legalstart marocain — création de société 100% en ligne" oninput="autoSave()">
+        <div class="field-label">Site web</div>
+        <input type="text" id="set-site" value="legalforce.ma" oninput="autoSave()">
+        <div class="field-label">WhatsApp</div>
+        <input type="text" id="set-wa" value="+212 660 403 053" oninput="autoSave()">
+        <div class="field-label">Email</div>
+        <input type="text" id="set-email" value="contact@legalforce.ma" oninput="autoSave()">
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Tarifs (mis à jour ici = mis à jour partout)</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div class="field-label">SARL Starter</div><input type="text" id="set-p-sarl-s" value="3 900 DH" oninput="autoSave()">
+            <div class="field-label">SARL Business</div><input type="text" id="set-p-sarl-b" value="6 900 DH" oninput="autoSave()">
+            <div class="field-label">SARL Premium</div><input type="text" id="set-p-sarl-p" value="9 900 DH" oninput="autoSave()">
+          </div>
+          <div>
+            <div class="field-label">SAS Starter</div><input type="text" id="set-p-sas-s" value="4 900 DH" oninput="autoSave()">
+            <div class="field-label">SAS Business</div><input type="text" id="set-p-sas-b" value="8 900 DH" oninput="autoSave()">
+            <div class="field-label">SAS Premium</div><input type="text" id="set-p-sas-p" value="12 900 DH" oninput="autoSave()">
+          </div>
+        </div>
+        <div class="field-label">Prix d'appel à mettre en avant</div>
+        <input type="text" id="set-price" value="3 900 DH" oninput="autoSave()">
+        <div class="field-label">Délai de création</div>
+        <input type="text" id="set-delai" value="7 à 15 jours" oninput="autoSave()">
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Cibles & ton</span></div>
+        <div class="field-label">Cible 1 — Locale</div>
+        <input type="text" id="set-cible1" value="Entrepreneurs 25-45 ans, Casablanca/Rabat/Marrakech" oninput="autoSave()">
+        <div class="field-label">Cible 2 — MRE</div>
+        <input type="text" id="set-cible2" value="MRE France, Belgique, Espagne, Emirats — création à distance" oninput="autoSave()">
+        <div class="field-label">Cible 3 — International</div>
+        <input type="text" id="set-cible3" value="Investisseurs étrangers — Succursale ou Filiale au Maroc" oninput="autoSave()">
+        <div class="field-label">Ton de voix</div>
+        <textarea id="set-ton" style="min-height:56px" oninput="autoSave()">Humain, direct, expert — comme un ami qui conseille. Phrases courtes. Toujours rassurant et orienté résultat.</textarea>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"><span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Arguments clés</span></div>
+        <div class="field-label">Argument 1</div>
+        <input type="text" id="set-arg1" value="100% en ligne — zéro déplacement, zéro papier" oninput="autoSave()">
+        <div class="field-label">Argument 2</div>
+        <input type="text" id="set-arg2" value="Dashboard client + suivi WhatsApp en temps réel" oninput="autoSave()">
+        <div class="field-label">Argument 3</div>
+        <input type="text" id="set-arg3" value="Paiement échelonné jusqu'en 4x sans frais" oninput="autoSave()">
+        <div class="field-label">Argument 4</div>
+        <input type="text" id="set-arg4" value="Juriste dédié inclus dans Business et Premium" oninput="autoSave()">
+        <div class="field-label">Statistique clé</div>
+        <input type="text" id="set-stat" value="95 000+ entreprises créées au Maroc en 2024 (+17.7% en 2025)" oninput="autoSave()">
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"># Hashtags fixes</div>
+        <textarea id="set-hashtags" style="min-height:70px" oninput="autoSave()">#legalforce #creersasociete #entrepreneurmaroc #sarlmaroc #creationentreprisemaroc #mre #sociétémaroc #startupmaroc</textarea>
+        <div class="field-label">Hashtags supplémentaires</div>
+        <input type="text" id="set-extra-hashtags" placeholder="#sarl #sas #succursale..." oninput="autoSave()">
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg> Couleurs</span></div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Couleur principale</div><div class="setting-sub">Violet LegalForce</div></div>
+          <input type="color" class="color-pick" id="set-c1" value="#6c5ce7" oninput="autoSave()">
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-lbl">Couleur CTA</div><div class="setting-sub">Rouge action</div></div>
+          <input type="color" class="color-pick" id="set-c2" value="#e63946" oninput="autoSave()">
+        </div>
+        <div class="setting-row" style="border:none">
+          <div><div class="setting-lbl">Fond principal</div><div class="setting-sub">Navy dark</div></div>
+          <input type="color" class="color-pick" id="set-c3" value="#0f0f2a" oninput="autoSave()">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg> Enrichir via fichier</span></div>
+          <div class="card-tag tag-ai">IA</div>
+        </div>
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">Upload ton Playbook, PDF, Word — l'IA extrait automatiquement les infos et enrichit la base.</div>
+        <div class="upload-zone" style="padding:18px" onclick="document.getElementById('db-file-input').click()">
+          <input type="file" id="db-file-input" accept=".txt,.md,.pdf,.docx,.json" style="display:none" onchange="handleDBFile(event)">
+          <div class="upload-icon" style="width:36px;height:36px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="upload-title" style="font-size:13px">Playbook, PDF, Word, TXT</div>
+          <div class="upload-sub">L'IA extrait et applique automatiquement</div>
+        </div>
+        <div id="db-file-loading" class="loading-state" style="display:none">
+          <div class="loader"></div>
+          <div class="loading-title">Analyse du document...</div>
+        </div>
+        <div id="db-file-result" class="db-file-result"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Générer une image IA</span></div>
+          <div class="card-tag tag-ai">fal.ai</div>
+        </div>
+        <div style="background:rgba(244,162,97,0.07);border:1px solid rgba(244,162,97,0.15);border-radius:7px;padding:9px 11px;font-size:11px;color:rgba(244,162,97,0.8);margin-bottom:12px;line-height:1.5">
+          <span style="display:inline-flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Clé API fal.ai requise</span> — inscription gratuite sur <strong>fal.ai</strong> (10$ offerts ~3000 images)
+        </div>
+        <div class="field-label">Clé API fal.ai</div>
+        <input type="text" id="set-fal-key" placeholder="fal_xxxx..." style="font-family:monospace;font-size:12px" oninput="autoSave()">
+        <div class="field-label">Description de l'image</div>
+        <textarea id="img-prompt" style="min-height:60px" placeholder="Ex : Photo professionnelle d'un entrepreneur marocain moderne devant Casablanca, couleurs bleu marine et violet, style corporate luxe..."></textarea>
+        <div class="pills" id="img-style-pills" style="margin-top:6px;margin-bottom:10px">
+          <button class="pill on" onclick="selPill(this,'img-style','corporate')">Corporate</button>
+          <button class="pill" onclick="selPill(this,'img-style','lifestyle')">Lifestyle</button>
+          <button class="pill" onclick="selPill(this,'img-style','minimal')">Minimaliste</button>
+          <button class="pill" onclick="selPill(this,'img-style','flat')">Flat Design</button>
+        </div>
+        <div class="pills" id="img-ratio-pills" style="margin-bottom:10px">
+          <button class="pill on" onclick="selPill(this,'img-ratio','1:1')">Carré 1:1</button>
+          <button class="pill" onclick="selPill(this,'img-ratio','9:16')">Story 9:16</button>
+          <button class="pill" onclick="selPill(this,'img-ratio','16:9')">Paysage 16:9</button>
+          <button class="pill" onclick="selPill(this,'img-ratio','4:5')">Portrait 4:5</button>
+        </div>
+        <button class="btn btn-primary" onclick="generateImage()" id="btn-gen-img">Générer l'image →</button>
+        <div id="img-gen-loading" class="loading-state" style="display:none">
+          <div class="loader"></div>
+          <div class="loading-title">Génération Flux Pro...</div>
+          <div class="loading-sub" id="img-gen-sub">~8 secondes</div>
+        </div>
+        <div id="img-gen-result" class="gen-preview-wrap" style="display:none">
+          <img id="img-gen-preview" src="" alt="Image générée">
+          <div class="gen-actions">
+            <button class="btn btn-ghost btn-sm" onclick="downloadImg()">↓ Télécharger</button>
+            <button class="btn btn-ghost btn-sm" onclick="useImg()">Utiliser comme template</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="saveSettings(true)" style="margin-bottom:8px"><span style="display:flex;align-items:center;gap:6px;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Sauvegarder</span></button>
+      <button class="btn btn-ghost" onclick="resetSettings()">Réinitialiser par défaut</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-analyse" onclick="showPage('analyse')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Analyser
+  </button>
+  <button class="bnav-btn" id="bnav-sujets" onclick="showPage('sujets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Sujets
+  </button>
+  <button class="bnav-btn" id="bnav-chat" onclick="showPage('chat')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat IA
+  </button>
+  <button class="bnav-btn" id="bnav-history" onclick="showPage('history')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Historique
+    <span class="bnav-badge" id="bnav-badge">0</span>
+  </button>
+  <button class="bnav-btn" id="bnav-settings" onclick="showPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    Paramètres
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ──────────────────────────────────────────
+// CONFIGURATION & DEFAULTS
+// ──────────────────────────────────────────
+const DEFAULTS = {
+  brand:'LegalForce', slogan:"Créez votre société au Maroc en 7 à 15 jours, 100% en ligne",
+  positioning:"Le Legalstart marocain — création de société 100% en ligne",
+  site:'legalforce.ma', wa:'+212 660 403 053', email:'contact@legalforce.ma',
+  price:'3 900 DH', delai:'7 à 15 jours',
+  'p-sarl-s':'3 900 DH','p-sarl-b':'6 900 DH','p-sarl-p':'9 900 DH',
+  'p-sas-s':'4 900 DH','p-sas-b':'8 900 DH','p-sas-p':'12 900 DH',
+  cible1:'Entrepreneurs 25-45 ans, Casablanca/Rabat/Marrakech',
+  cible2:'MRE France, Belgique, Espagne, Emirats — création à distance',
+  cible3:"Investisseurs étrangers — Succursale ou Filiale au Maroc",
+  ton:"Humain, direct, expert — comme un ami qui conseille. Phrases courtes.",
+  arg1:"100% en ligne — zéro déplacement, zéro papier",
+  arg2:"Dashboard client + suivi WhatsApp en temps réel",
+  arg3:"Paiement échelonné jusqu'en 4x sans frais",
+  arg4:"Juriste dédié inclus dans Business et Premium",
+  stat:"95 000+ entreprises créées au Maroc en 2024 (+17.7% en 2025)",
+  hashtags:'#legalforce #creersasociete #entrepreneurmaroc #sarlmaroc #creationentreprisemaroc #mre #sociétémaroc #startupmaroc',
+  extraHashtags:'',
+  c1:'#6c5ce7',c2:'#e63946',c3:'#0f0f2a',
+  falKey:''
+};
+
+const ALGO = {
+  instagram:`<strong>Instagram 2026 (sources : Shopify, Hootsuite, Buffer) :</strong><br>
+• Caption visible : <strong>125 chars max</strong> avant "voir plus" — le hook DOIT tenir ici<br>
+• Hashtags : <strong>3-5 max</strong> (depuis déc. 2024, les hashtags ne sont plus suivis, ils servent au SEO de recherche uniquement)<br>
+• SEO mots-clés dans la caption > hashtags pour la découverte<br>
+• Signal le plus fort : <strong>partages DM</strong> (3-5× plus fort que les likes)<br>
+• Carrousels = 3× plus de portée que les images seules<br>
+• Sauvegardes = signal fort (contenu éducatif / référence)<br>
+• Contenu original favorisé — watermarks pénalisés<br>
+• 80/20 : max 20% promotionnel sinon pénalité`,
+
+  tiktok:`<strong>TikTok 2026 (sources : Sprout Social, Hootsuite, OpusClip) :</strong><br>
+• Caption : concise, info importante en <strong>premier</strong> (tronqué après ~1 ligne)<br>
+• Max 4 000 chars pour le SEO interne TikTok<br>
+• L'algo analyse <strong>mots parlés + texte overlay</strong> pour matcher les recherches<br>
+• Hashtags : <strong>3-5</strong> pertinents et niche — pas de spam #fyp<br>
+• Signal principal : <strong>watch time complet + rewatches</strong><br>
+• Accroche : <strong>1,7 premières secondes</strong> déterminent si l'algo distribue<br>
+• SEO TikTok = moteur de recherche pour Gen Z<br>
+• Sous-titres obligatoires (30% regardent sans son)`,
+
+  linkedin:`<strong>LinkedIn 2026 (sources : Hootsuite, OpusClip) :</strong><br>
+• Visible avant "voir plus" : <strong>140 chars</strong> (règle Hootsuite : 25 mots max pour le hook)<br>
+• Longueur optimale post : <strong>1 300-1 600 chars</strong><br>
+• <strong>PAS de lien dans le post</strong> — réduit drastiquement la portée (mettre le lien en commentaire)<br>
+• Hashtags : <strong>3 max</strong> selon LinkedIn (sweet spot algorithmique)<br>
+• Vidéo : autoplay muet → sous-titres obligatoires<br>
+• Signal fort : <strong>commentaires longs</strong> + temps de lecture (dwell time)<br>
+• Public B2B professionnel — ton expert, pas vendeur`,
+
+  facebook:`<strong>Facebook 2026 (sources : Wordstream, SproutSocial, Hootsuite) :</strong><br>
+• Posts sous <strong>80 chars</strong> = meilleure portée organique<br>
+• Posts <strong>80-150 chars</strong> = meilleur pour clics et commentaires<br>
+• Au-dessus de <strong>280 chars</strong> = chute d'engagement<br>
+• <strong>Zéro lien</strong> dans le post (98% des posts vus n'en ont pas)<br>
+• Signal fort : <strong>partages + sauvegardes</strong> > likes<br>
+• Première <strong>60 minutes</strong> critiques — l'algo teste sur un échantillon<br>
+• Reels 15-30s = format le plus distribué en 2026<br>
+• Éviter l'engagement bait ("likez si vous aimez") — pénalisé`,
+
+  story:`<strong>Instagram/Facebook Stories 2026 :</strong><br>
+• Texte lisible en <strong>3 secondes max</strong> — attention = 1-3s<br>
+• Format <strong>9:16 plein écran</strong> — ne jamais laisser de bandes noires<br>
+• CTA sticker lien ou swipe-up<br>
+• Séquences de <strong>3-5 stories</strong> = meilleur engagement<br>
+• Pas de hashtags dans les stories (aucun effet algorithmique)<br>
+• Musique tendance = boost de distribution<br>
+• Réponses aux stories = signal de relation fort`,
+
+  whatsapp:`<strong>WhatsApp Business 2026 (sources : ActiveCampaign, Braze) :</strong><br>
+• ⚠️ WhatsApp EST UNE MESSAGERIE DIRECTE, pas un réseau social<br>
+• <strong>ZÉRO hashtag</strong> — ils n'ont aucune fonction sur WhatsApp<br>
+• Message <strong>court, personnel, conversationnel</strong> — comme un SMS premium<br>
+• Une seule information + une seule action par message<br>
+• Taux d'ouverture : <strong>98%</strong> — ton différent de tous les autres canaux<br>
+• Obtenir le <strong>consentement explicite</strong> avant d'envoyer<br>
+• Max <strong>1-2 messages marketing/semaine</strong> (risque de blocage sinon)<br>
+• Ouvrir avec la valeur pour le destinataire, pas avec la marque`
+};
+
+const OBJ_EXPLAIN = {
+  tofu:`<strong style="color:rgba(232,232,240,0.8)">TOFU — Notoriété</strong> — Audience froide. Objectif : capter l'attention, créer de la notoriété. Contenu éducatif, chiffres-chocs, questions intrigantes, comparaisons surprenantes.`,
+  mofu:`<strong style="color:rgba(232,232,240,0.8)">MOFU — Considération</strong> — Audience qui te connaît mais hésite. Objectif : expliquer la valeur, montrer ce qui est inclus, lever les objections, montrer les preuves sociales.`,
+  bofu:`<strong style="color:rgba(232,232,240,0.8)">BOFU — Conversion</strong> — Audience prête à acheter. Objectif : déclencher l'action maintenant. Urgence, offre claire, témoignage client, prix + paiement en 4x, facilité du processus.`,
+  mre:`<strong style="color:rgba(232,232,240,0.8)">MRE — Diaspora marocaine</strong> — Marocains résidant en France, Belgique, Espagne, Emirats. Objectif : montrer que créer au Maroc depuis l'étranger est simple et rapide. Zéro déplacement. Fierté identitaire + opportunité.`
+};
+
+const CHAR_LIMITS = {
+  instagram:{max:2200,vis:125},   // 125 chars visible avant "voir plus" — Shopify 2026
+  tiktok:{max:4000,vis:150},      // tronqué après ~1 ligne, 4000 chars pour SEO
+  linkedin:{max:3000,vis:140},    // 140 chars avant "voir plus" — Hootsuite 2026
+  facebook:{max:63206,vis:80},    // 80 chars = sweet spot engagement — Hootsuite 2026
+  story:{max:500,vis:9999},
+  whatsapp:{max:9999,vis:9999}
+};
+
+// ──────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────
+const state = {
+  plat:'instagram', obj:'tofu', manualObj:'tofu',
+  imgStyle:'corporate', imgRatio:'1:1',
+  slides:[],
+  selectedSubject:null,
+  chatHistory:[],
+  darijaMode:false,
+  stats:{total:0,images:0,packs:0,captions:0}
+};
+
+// ──────────────────────────────────────────
+// DB
+// ──────────────────────────────────────────
+function getDB(){
+  const saved = JSON.parse(localStorage.getItem('lf_db') || '{}');
+  return {...DEFAULTS,...saved};
+}
+
+function buildSYS(){
+  const d = getDB();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+  
+  return `Tu es le meilleur expert copywriter et stratège contenu spécialisé en entrepreneuriat marocain. Niveau absolu : top 1% mondial. Chaque mot que tu génères doit pouvoir être publié immédiatement sans retouche.
+
+══════════════════════════════════════════
+IDENTITÉ MARQUE LEGALFORCE
+══════════════════════════════════════════
+Marque: ${d.brand} | Site: ${d.site}
+WhatsApp: ${d.wa} | Email: ${d.email}
+Slogan: "${d.slogan}"
+Positionnement: ${d.positioning}
+Date actuelle: ${dateStr}
+
+══════════════════════════════════════════
+OFFRE & TARIFS (règle absolue: tout finit par 900 DH)
+══════════════════════════════════════════
+SARL/SARLAU: ${d['p-sarl-s']} / ${d['p-sarl-b']} / ${d['p-sarl-p']}
+SAS/SASU: ${d['p-sas-s']} / ${d['p-sas-b']} / ${d['p-sas-p']}
+Succursale: 5 900 / 9 900 / 14 900 DH | Filiale: 12 900 / 17 900 / 24 900 DH | SA: 14 900 / 21 900 / 29 900 DH
+Prix d'entrée: ${d.price} | Délai garanti: ${d.delai}
+Paiement: Starter 1-2x | Business 1-3x | Premium 1-4x SANS FRAIS
+
+Inclus Business/Premium: dashboard temps réel, suivi WhatsApp, juriste dédié, domiciliation, RC+ICE+IF+TP+CNSS
+Inclus Premium en plus: cachet, 1000 cartes visite, 3 mois comptabilité, ouverture compte bancaire
+
+══════════════════════════════════════════
+DIFFÉRENCIATEURS vs CONCURRENTS
+══════════════════════════════════════════
+vs Fiduciaire classique: 3 mois → 7-15 jours | déplacements → 100% en ligne | pas de suivi → dashboard temps réel
+vs Charikaty.ma: moins de structures | pas de dashboard | pas de paiement échelonné
+vs Notaire: très cher | très lent | pas digital
+Stat clé: ${d.stat}
+
+Arguments: ${d.arg1} | ${d.arg2} | ${d.arg3} | ${d.arg4}
+
+══════════════════════════════════════════
+3 AVATARS — PSYCHOLOGIE EXACTE
+══════════════════════════════════════════
+
+AVATAR 1 — Entrepreneur local (50% des clients)
+Profil: ${d.cible1}
+Douleurs: complexité administrative, peur de l'échec, méfiance fiduciaires, manque de temps, coût perçu élevé
+Désirs: rapidité, simplicité, suivi en temps réel, aucune surprise de prix
+Objections: "trop cher" / "je peux le faire seul" / "je sais pas quelle structure choisir"
+Hook idéal: chiffre précis + bénéfice immédiat ("En 7 jours, ta SARL est créée.")
+Déclencheurs: prix affiché + délai précis + preuve sociale locale + facilité du processus
+
+AVATAR 2 — MRE investisseur (30% des clients)
+Profil: ${d.cible2}
+Réalité économique: diaspora envoie 115 milliards DH/an au Maroc (record 2024). Seulement 10% vers investissement productif. Veulent investir mais bloqués par distance + bureaucratie perçue.
+Douleurs profondes: distance infranchissable, peur d'être arnaqué de loin, bureaucratie perçue bloquante, sentiment de ne pas pouvoir entreprendre au bled depuis l'étranger
+Désirs émotionnels: fierté d'appartenance (créer au Maroc = retour aux racines), sécurité (quelqu'un de confiance gère), liberté (sans déplacement), légitimité (vraie société au Maroc)
+Déclencheurs psychologiques MRE:
+  - Empathie d'abord: commencer par leur situation réelle (vivre à Paris/Lyon/Bruxelles)
+  - "Zéro déplacement" = argument N°1 absolu pour cette cible
+  - Confiance: suivi WhatsApp + juriste dédié = quelqu'un gère à ta place
+  - FOMO: "D'autres MRE créent pendant que tu hésites"
+  - Concrétisation: transformer l'argent envoyé en structure légale officielle
+Langue: français fluide + touches darija naturelles (JAMAIS systématique, seulement quand ça sonne vrai)
+Hook idéal: scénario vécu ("Tu vis à Paris mais ton projet est au Maroc ?")
+
+AVATAR 3 — Investisseur étranger (20%)
+Profil: ${d.cible3}
+Profil: DG entreprises européennes/Golfe, Succursale ou Filiale, budget élevé, exigent crédibilité
+Hook idéal: sécurité juridique + rapidité + interlocuteur unique professionnel
+Ton: strictement professionnel, chiffres et preuves, JAMAIS de darija
+
+══════════════════════════════════════════
+TON DE VOIX
+══════════════════════════════════════════
+${d.ton}
+Règle d'or: parler comme un ami expert, JAMAIS comme une banque ou un cabinet d'avocats.
+Phrases courtes (max 15 mots). Pas de jargon juridique. Pas de conditionnel. Pas de formules creuses.
+Interdits absolus: "innovant", "révolutionnaire", "unique en son genre" → MONTRER, ne pas dire.
+
+══════════════════════════════════════════
+FRAMEWORKS COPYWRITING — APPLIQUER SELON L'OBJECTIF
+══════════════════════════════════════════
+
+TOFU (notoriété — audience froide qui ne connaît pas LegalForce):
+Framework: AIDA (Attention → Intérêt → Désir → Action légère)
+Objectif: éduquer, surprendre, intriguer. PAS de vente directe.
+Hook type: chiffre inattendu + contraste / question rhétorique / fait peu connu
+Exemple: "95 000 entreprises créées au Maroc en 2024. La tienne manque à l'appel."
+CTA légère: question, "dis-moi en commentaire", "sauvegarde ce post"
+
+MOFU (considération — audience qui connaît mais hésite):
+Framework: PAS (Problème → Agitation → Solution)
+Identifier la douleur précise, amplifier sans exagérer, présenter LegalForce comme seule solution logique
+Hook type: problème vécu / comparaison avant-après / objection levée
+Exemple: "3 mois chez le notaire pour une SARL. LegalForce : 7 jours."
+
+BOFU (conversion — audience prête à acheter):
+Framework: FAB + Urgence (Feature→Advantage→Benefit + FOMO/Scarcité)
+Offre claire, prix précis, paiement 4x, objections levées, CTA fort et direct
+Hook type: urgence temporelle / prix + valeur / facilité de démarrage
+Exemple: "Ta SARL en 7 jours. À partir de 3 900 DH. Paiement 4x. Commence maintenant."
+
+MRE (diaspora):
+Framework: Empathie → Rêve → Facilité → Preuve → Action
+1. Commencer par leur réalité vécue (Paris, Bruxelles, Dubai...)
+2. Nommer le rêve (créer au bled, revenir investir)
+3. Montrer la facilité (100% en ligne, zéro déplacement)
+4. Preuve sociale (X MRE ont déjà créé)
+5. Action simple
+
+══════════════════════════════════════════
+DÉCLENCHEURS PSYCHOLOGIQUES VÉRIFIÉS
+══════════════════════════════════════════
+Utilise ces techniques (scientifiquement prouvées, éthiques):
+- Preuve sociale chiffrée et précise: "95 000+ entreprises en 2024" (pas "beaucoup")
+- Rareté/urgence: "traitement prioritaire — places limitées"
+- Autorité: "juriste dédié inclus dans Business et Premium"
+- FOMO identitaire: "pendant que tu réfléchis, quelqu'un prend le nom de ta société"
+- Identité MRE: fierté d'appartenance, légitimité de créer au Maroc
+- Hook émotionnel → +60% de partages vs hook purement informatif (source: Marketing LTB 2025)
+- Question finale → +29% de commentaires
+- Chiffre précis dans le hook → +47% mémorabilité
+- Tension informative (info gap theory): ne jamais donner la réponse dans le hook
+
+══════════════════════════════════════════
+RÈGLES ALGORITHMES — DONNÉES VÉRIFIÉES MARS 2026
+(Sources: Adam Mosseri/Jan 2025, Sprout Social, Hootsuite, Buffer, Richard van der Blom, Dataslayer)
+══════════════════════════════════════════
+
+▶ INSTAGRAM 2026 (sources: Mosseri Jan 2025, Sprout Social 2025 Benchmarks, Almcorp Dec 2025)
+Signal N°1: PARTAGES VIA DM — pondérés 3-5× plus que les likes. 694 000 Reels partagés/minute.
+Signal N°2: WATCH TIME — 3 secondes critiques. Reels avec >60% de rétention à 3s = 5-10× plus de portée.
+Signal N°3: SAUVEGARDES — contenu éducatif qui "vaut la peine d'être relu plus tard"
+Caption visible avant "voir plus": 125 chars MAX → hook DOIT tenir ici
+Hashtags: 3-5 MAXIMUM (depuis déc 2024 = SEO recherche uniquement, JAMAIS 10-30)
+Mots-clés dans la caption > hashtags pour la découverte organique
+Reels: 7-15s = viral max | 30-90s = storytelling éducatif | >90s = penalisé sauf watch time exceptionnel
+Carrousels: 10,15% d'engagement moyen, jusqu'à 20 slides possibles
+Format caption optimal: hook ≤125 chars + saut de ligne + développement + hashtags en bas
+80% valeur / 20% promo max — contenu trop promotionnel pénalisé
+Contenu original favorisé, watermarks TikTok pénalisés
+Nouvelles fonctions: "Trial Reels" (tester avec non-followers), traductions IA automatiques
+
+▶ TIKTOK 2026 (sources: OpusClip Feb 2026, Virvid Jan 2026, Sprout Social Feb 2026)
+Signal N°1: COMPLETION RATE — 70%+ = viral (up from 50% en 2024). Rewatches = gold.
+Signal N°2: RECHERCHE/SEO — TikTok est devenu moteur de recherche Gen Z. L'algo lit la caption + texte overlay + audio.
+Signal N°3: ENGAGEMENT première heure — commenter, répondre aux commentaires immédiatement
+Caption: concise, info importante EN PREMIER (tronqué après ~1 ligne) — keywords naturels en premier
+Hashtags: 3-5 ciblés et niche — #fyp inutile en 2026, hashtag stuffing = pénalité
+Sous-titres OBLIGATOIRES — 30% regardent sans son, l'algo lit les mots pour SEO
+Durée optimale: 60-180s pour contenu éducatif business (shift majeur 2025-2026)
+7-15s pour viral/divertissement | Short mais >70% completion > long avec mauvaise rétention
+Niche focus > trend générique — micro-virality > viral de masse
+L'algo lit: caption + texte à l'écran + paroles + son → tous doivent avoir les mêmes keywords
+Nouvelle règle 2026: 3-5 vidéos/semaine > quotidien basse qualité
+
+▶ LINKEDIN 2026 (sources: Richard van der Blom 2025, Sprout Social, LaGrowthMachine Feb 2026)
+Signal N°1: DWELL TIME — combien de temps les gens lisent avant de scroller. Contenu natif = avantagé.
+Signal N°2: COMMENTAIRES LONGS — 1 commentaire de 150 mots > 50 likes (LinkedIn Transparency Report 2025)
+Signal N°3: SAVES — contenu "worth revisiting"
+Hook visible: 140 chars MAX avant "voir plus" — 25 mots ou moins
+Longueur optimale: 1 300-1 600 chars pour engagement maximum
+⚠️ ZÉRO LIEN DANS LE POST → -40% de portée initiale. Mettre le lien en PREMIER COMMENTAIRE 30-60 min après publication.
+Hashtags: 3 MAX (sweet spot officiel LinkedIn — 10+ hashtags = -68% de portée)
+Formats engagement 2026: Carrousel multi-images = 6,6% | Document PDF = 6,1% | Vidéo native = 5,6% | Image seule = 4,85% | Texte seul = 4%
+Profil personnel > page entreprise: 8× plus d'engagement (structural algorithm advantage)
+Employee reshares: 561% plus de portée que posts page entreprise
+Vidéo: sous-titres obligatoires (+29% engagement), formats carrés/verticaux (+2,1× mobile), accroche <8s
+Golden hour: premier 60 minutes = critique. Répondre à CHAQUE commentaire.
+Contenu éducatif avec données concrètes et exemples réels = 3,7× plus de portée
+
+▶ FACEBOOK 2026 (sources: Cloudix Digital Feb 2026, Hootsuite Jan 2026, Wordstream Jan 2026)
+Signal N°1: MEANINGFUL INTERACTIONS — partages + sauvegardes > likes. Un partage > 50 likes.
+Signal N°2: WATCH TIME REELS — 15-30s = format le plus distribué. Tous les contenus vidéo = Reels depuis 2025.
+Signal N°3: EARLY ENGAGEMENT — première 60 minutes: l'algo teste sur un échantillon.
+Post texte: sous 80 chars = meilleure portée organique | 80-150 chars = meilleur pour clics | >280 chars = chute
+⚠️ ZÉRO LIEN dans le post — 98% des posts performants n'en contiennent pas. Kills la portée organique.
+Éviter l'engagement bait ("likez si...") → pénalisé algorithmiquement
+Contenu original uniquement — reposts et watermarks TikTok pénalisés massivement
+UTIS (User True Interest Survey): Meta enquête maintenant les utilisateurs sur la pertinence. Contenu vague = pénalisé.
+
+▶ STORY (Instagram/Facebook)
+Texte lisible en 3s — attention = 1-3s maximum. Si pas compris en 3s = swipe.
+Format 9:16 plein écran, jamais de bandes noires
+Pas de hashtags en story (aucun effet algorithmique prouvé)
+Séquences 3-5 stories = meilleur engagement narrative
+Musique tendance = boost de distribution
+CTA: sticker lien ou swipe-up
+
+▶ WHATSAPP ⚠️ RÈGLES ABSOLUES (sources: ActiveCampaign Dec 2025, Braze Apr 2025, customer.io Feb 2026)
+⚠️ WhatsApp = MESSAGERIE DIRECTE 1-to-1. PAS un réseau social. PAS un broadcast platform classique.
+⚠️ ZÉRO HASHTAG — fonctionnellement inexistant sur WhatsApp, jamais utiliser
+Message: court, personnel, conversationnel — taux d'ouverture 98%, mais facilement bloqué si spam
+Structure message optimal: [Prénom] + valeur immédiate pour EUX + une seule action
+Une information + un CTA par message MAXIMUM — pas de liste de features
+Max 1-2 messages marketing/semaine (risque blocage compte si plus)
+Jamais commencer par la marque — commencer par le bénéfice du destinataire
+Ton ami expert: "Salam [Prénom], j'ai vu que tu cherchais à créer ta société..." JAMAIS "#legalforce créez votre SARL..."
+Message de référence: "Salam [Prénom], ta SARL peut être prête en 7 jours sans te déplacer. Tu veux qu'on t'explique ? → [lien]"
+
+══════════════════════════════════════════
+HASHTAGS (Instagram/TikTok/LinkedIn seulement — JAMAIS WhatsApp/Facebook)
+══════════════════════════════════════════
+${d.hashtags} ${d.extraHashtags}
+
+══════════════════════════════════════════
+STANDARD DE QUALITÉ ABSOLU
+══════════════════════════════════════════
+1. Le hook doit créer une tension que le cerveau DOIT résoudre (information gap theory)
+2. JAMAIS générique — chaque texte est unique, spécifique, ancré dans la réalité LegalForce
+3. Chiffres PRÉCIS et vérifiables — pas "beaucoup", "rapidement", mais "7 jours", "95 000+"
+4. CTA = urgence + désir immédiat. Jamais "contactez-nous" ou "visitez notre site"
+5. Adapter le registre à chaque plateforme — LinkedIn ≠ TikTok ≠ WhatsApp
+6. Pour MRE: commencer TOUJOURS par leur réalité vécue (vivre à l'étranger), pas par le produit
+7. Jamais écrire "innovant" "révolutionnaire" "unique" — montrer des preuves, pas des adjectifs
+8. WhatsApp = message d'un ami, pas une pub. Si ça ressemble à une pub = mauvais.
+9. La caption parfaite = quelqu'un la lit et dit "c'est exactement mon problème" ou "je dois partager ça"`;
+}
+
+// ──────────────────────────────────────────
+// NAVIGATION
+// ──────────────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const pg = document.getElementById('page-'+name);
+  if(pg) pg.classList.add('active');
+  const ni = document.querySelector(`[data-page="${name}"]`);
+  if(ni) ni.classList.add('active');
+  const bn = document.getElementById('bnav-'+name);
+  if(bn) bn.classList.add('active');
+  if(name==='history') renderHist();
+  window.scrollTo(0,0);
+}
+
+// ──────────────────────────────────────────
+// PILLS / TOGGLES
+// ──────────────────────────────────────────
+function selPill(el, key, val){
+  el.closest('.pills').querySelectorAll('.pill').forEach(p=>{
+    p.classList.remove('on','on-r','on-g');
+  });
+  el.classList.add('on');
+  state[key] = val;
+  if(key==='plat'){
+    const tip = document.getElementById('algo-tip');
+    if(tip) tip.innerHTML = `<strong>Algorithme ${val.charAt(0).toUpperCase()+val.slice(1)} :</strong> ` + (ALGO[val]||'');
+  }
+  if(key==='obj'){
+    const ex = document.getElementById('obj-explain');
+    if(ex) ex.innerHTML = OBJ_EXPLAIN[val]||'';
+    const pills = document.getElementById('obj-pills');
+    if(pills){
+      el.classList.remove('on');
+      if(val==='tofu'||val==='mofu') el.classList.add('on-r');
+      else if(val==='bofu') el.classList.add('on-g');
+      else el.classList.add('on');
+    }
+  }
+}
+
+function toggleDarija(){
+  state.darijaMode = !state.darijaMode;
+  document.getElementById('toggle-darija').classList.toggle('on',state.darijaMode);
+}
+
+// ──────────────────────────────────────────
+// FILE HANDLING
+// ──────────────────────────────────────────
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  addSlides(files);
+}
+function handleFiles(e){ addSlides(Array.from(e.target.files)); }
+function addSlides(files){
+  files.slice(0,10-state.slides.length).forEach(f=>{
+    const mime = ['image/jpeg','image/png','image/gif','image/webp'].includes(f.type)?f.type:'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      state.slides.push({b64:ev.target.result.split(',')[1],src:ev.target.result,mime,name:f.name});
+      renderSlides();
+    };
+    reader.readAsDataURL(f);
+  });
+}
+function removeSlide(i){ state.slides.splice(i,1); renderSlides(); }
+function moveSlide(i,dir){
+  const j = i+dir;
+  if(j<0||j>=state.slides.length) return;
+  [state.slides[i],state.slides[j]] = [state.slides[j],state.slides[i]];
+  renderSlides();
+}
+function clearSlides(){
+  state.slides=[];
+  document.getElementById('file-input').value='';
+  renderSlides();
+  document.getElementById('out-analyse').innerHTML = `<div class="empty-state"><div class="empty-icon" style="opacity:.35"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="empty-title">Upload un template pour commencer</div><div class="empty-sub">L'IA analyse chaque zone de texte<br>et réécrit avec le niveau d'un expert copywriter</div></div>`;
+}
+function renderSlides(){
+  const n = state.slides.length;
+  const btn = document.getElementById('btn-analyse');
+  if(!n){
+    document.getElementById('upload-area').style.display='block';
+    document.getElementById('slides-area').style.display='none';
+    if(btn) btn.disabled=true;
+    return;
+  }
+  document.getElementById('upload-area').style.display='none';
+  document.getElementById('slides-area').style.display='block';
+  if(btn) btn.disabled=false;
+  document.getElementById('slides-count').innerHTML = n>1?`<span>${n}</span> slides — carrousel détecté ✓`:`<span>1</span> image`;
+  document.getElementById('carousel-badge').style.display = n>1?'block':'none';
+  document.getElementById('slides-grid').innerHTML = state.slides.map((s,i)=>`
+    <div class="slide-thumb">
+      <img src="${s.src}" alt="Slide ${i+1}">
+      <div class="slide-num">${i+1}</div>
+      <button class="slide-rm" onclick="removeSlide(${i})">×</button>
+      <div class="slide-mv">
+        ${i>0?`<button onclick="moveSlide(${i},-1)">◀</button>`:''}
+        ${i<state.slides.length-1?`<button onclick="moveSlide(${i},1)">▶</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ──────────────────────────────────────────
+// API CALL
+// ──────────────────────────────────────────
+// ──────────────────────────────────────────
+// CLÉ API
+// ──────────────────────────────────────────
+function getAPIKey(){
+  return localStorage.getItem('lf_api_key') || '';
+}
+function saveAPIKey(key){
+  localStorage.setItem('lf_api_key', key.trim());
+}
+function showAPIKeyModal(){
+  const existing = document.getElementById('api-key-modal');
+  if(existing) { existing.style.display='flex'; return; }
+  const modal = document.createElement('div');
+  modal.id = 'api-key-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:#1a1a3e;border:1px solid rgba(108,92,231,0.3);border-radius:16px;padding:28px;max-width:420px;width:100%">
+      <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">Clé API Anthropic requise</div>
+      <div style="font-size:12px;color:rgba(232,232,240,0.55);margin-bottom:20px;line-height:1.6">
+        Pour utiliser LegalForce Studio, tu as besoin d'une clé API Anthropic.<br>
+        <a href="https://console.anthropic.com" target="_blank" style="color:#a29bfe">console.anthropic.com</a> → API Keys → Create Key<br>
+        <span style="color:rgba(232,232,240,0.35);font-size:11px">La clé est stockée uniquement dans ton navigateur.</span>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:rgba(232,232,240,0.35);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-family:'Sora',sans-serif">Clé API (sk-ant-...)</div>
+      <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(108,92,231,0.3);border-radius:10px;color:#fff;font-family:monospace;font-size:13px;padding:11px 14px;outline:none;box-sizing:border-box;margin-bottom:12px">
+      <button onclick="submitAPIKey()" style="width:100%;background:linear-gradient(135deg,#6c5ce7,#5a4fdd);color:#fff;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-weight:800;font-size:14px;padding:13px;cursor:pointer">
+        Enregistrer et continuer →
+      </button>
+      <div id="api-key-error" style="color:#e63946;font-size:11px;margin-top:8px;display:none"></div>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(()=>document.getElementById('api-key-input')?.focus(), 100);
+}
+function submitAPIKey(){
+  const input = document.getElementById('api-key-input');
+  const key = input?.value?.trim();
+  if(!key || !key.startsWith('sk-')) {
+    const err = document.getElementById('api-key-error');
+    if(err){err.style.display='block';err.textContent='Clé invalide — elle doit commencer par sk-';}
+    return;
+  }
+  saveAPIKey(key);
+  const modal = document.getElementById('api-key-modal');
+  if(modal) modal.style.display='none';
+}
+
+async function callAPI(prompt, images=[], maxTokens=2500){
+  const apiKey = getAPIKey();
+  if(!apiKey){ showAPIKeyModal(); throw new Error('Clé API manquante — entre ta clé API Anthropic'); }
+  let content;
+  if(!images.length) content = prompt;
+  else if(images.length===1) content=[{type:'image',source:{type:'base64',media_type:images[0].mime,data:images[0].b64}},{type:'text',text:prompt}];
+  else{ content=images.map(img=>({type:'image',source:{type:'base64',media_type:img.mime,data:img.b64}})); content.push({type:'text',text:prompt}); }
+  const res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system:buildSYS(),messages:[{role:'user',content}]})
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    const msg = e.error?.message || `Erreur API ${res.status}`;
+    if(res.status === 401) { showAPIKeyModal(); throw new Error('Clé API invalide — vérifie ta clé dans les paramètres'); }
+    throw new Error(msg);
+  }
+  return (await res.json()).content?.[0]?.text||'';
+}
+function parseJSON(raw){
+  if(!raw) return null;
+  // Étape 1 : nettoyer les blocs markdown
+  let clean = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  // Étape 2 : trouver le premier { ou [ — tout ce qui précède est du texte parasite
+  const firstBrace = clean.search(/[{[]/);
+  if(firstBrace > 0) clean = clean.substring(firstBrace);
+  // Étape 3 : trouver le dernier } ou ] correspondant
+  const lastBrace = Math.max(clean.lastIndexOf('}'), clean.lastIndexOf(']'));
+  if(lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
+  // Étape 4 : essayer de parser
+  try{ return JSON.parse(clean); }catch(e1){
+    // Étape 5 : nettoyage agressif des caractères problématiques
+    try{
+      // Supprimer les commentaires JS-style
+      let fixed = clean.replace(/\/\/[^\n]*/g,'').replace(/\/\*[\s\S]*?\*\//g,'');
+      // Supprimer les virgules finales avant } ou ]
+      fixed = fixed.replace(/,\s*([}\]])/g,'$1');
+      return JSON.parse(fixed);
+    }catch(e2){ return null; }
+  }
+}
+
+// ──────────────────────────────────────────
+// LOADING
+// ──────────────────────────────────────────
+const LOAD_MSGS = ['Analyse visuelle en cours...','Détection des zones de texte...','Application des frameworks copywriting...','Optimisation algorithme plateforme...','Génération finale...'];
+let loadInterval;
+function showLoading(targetId, isCarousel=false){
+  let i=0;
+  document.getElementById(targetId).innerHTML=`<div class="loading-state"><div class="loader"></div><div class="loading-title" id="load-title">${LOAD_MSGS[0]}</div><div class="loading-sub" id="load-sub">${isCarousel?`Analyse cohérente — ${state.slides.length} slides`:'Analyse en cours...'}</div></div>`;
+  loadInterval = setInterval(()=>{i=(i+1)%LOAD_MSGS.length;const el=document.getElementById('load-title');if(el)el.textContent=LOAD_MSGS[i];},1600);
+}
+function hideLoading(){ clearInterval(loadInterval); }
+
+// ──────────────────────────────────────────
+// CHAR BAR
+// ──────────────────────────────────────────
+function charBar(text, plat){
+  const lim = CHAR_LIMITS[plat]||CHAR_LIMITS.instagram;
+  if(lim.vis>=9999) return '';
+  const len=(text||'').length;
+  const pct=Math.min(100,Math.round(len/lim.vis*100));
+  const ok=len<=lim.vis;
+  const col=ok?'var(--g)':'var(--r)';
+  return `<div class="char-bar"><div class="char-info"><span>Visible avant coupure ${plat}</span><span style="color:${col}">${Math.min(len,lim.vis)} / ${lim.vis} chars</span></div><div class="char-track"><div class="char-fill" style="width:${pct}%;background:${col}"></div></div></div>`;
+}
+
+// ──────────────────────────────────────────
+// HOOK SCORE (algorithme avancé)
+// ──────────────────────────────────────────
+function hookScore(text){
+  if(!text) return 0;
+  let s=40;
+  // Chiffres = urgence/preuve
+  if(/\d+/.test(text)) s+=15;
+  // Question = engagement
+  if(/\?/.test(text)) s+=12;
+  // Longueur optimale
+  if(text.length<80) s+=10;
+  if(text.length>=40&&text.length<=80) s+=5;
+  // Interpellation directe
+  if(/vous|votre|tu|ton|toi/i.test(text)) s+=10;
+  // Exclamation
+  if(/!/.test(text)) s+=5;
+  // Mots-chocs
+  if(/secret|jamais|voici|stop|attention|erreur|gratuit|sans|zéro|100%/i.test(text)) s+=8;
+  // MRE hooks
+  if(/depuis|france|belgique|emirat|étranger|distance/i.test(text)) s+=5;
+  return Math.min(99,s);
+}
+
+// ──────────────────────────────────────────
+// COPY
+// ──────────────────────────────────────────
+function cp(btn, text){
+  const t=(text||'').replace(/\\n/g,'\n');
+  navigator.clipboard.writeText(t).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+  if(btn){btn.classList.add('copied');btn.textContent='✓ Copié';setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Copier';},2000);}
+}
+function cpAll(outId){
+  const texts=[...document.querySelectorAll(`#${outId} .rblock-text`)].map(e=>e.innerText).join('\n\n—\n\n');
+  navigator.clipboard.writeText(texts).catch(()=>{});
+}
+
+// ──────────────────────────────────────────
+// HASHTAGS
+// ──────────────────────────────────────────
+function renderHashtags(tags){
+  const d=getDB();
+  const base=d.hashtags.split(' ').filter(t=>t.startsWith('#'));
+  const extra=(d.extraHashtags||'').split(' ').filter(t=>t.startsWith('#'));
+  const specific=(tags||[]).filter(t=>t.startsWith('#'));
+  const all=[...new Set([...specific,...base,...extra])];
+  return `<div class="hashtag-box">
+    <div class="hashtag-title">Hashtags recommandés</div>
+    <div class="hashtag-list">${all.map(t=>`<span class="htag" onclick="cp(null,'${t}')">${t}</span>`).join('')}</div>
+    <button class="btn-icon-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="cp(this,'${all.join(' ')}')">Copier tous les hashtags</button>
+  </div>`;
+}
+
+// ──────────────────────────────────────────
+// RETOUCHE
+// ──────────────────────────────────────────
+function showRetouche(blockId, texteActuel, zone, contexte){
+  const block=document.getElementById(blockId);
+  if(!block) return;
+  const existing=block.querySelector('.retouche-panel');
+  if(existing){existing.remove();return;}
+  const panel=document.createElement('div');
+  panel.className='retouche-panel';
+  panel.innerHTML=`<div class="retouche-label" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Retouche — ${zone}</div>
+    <div class="retouche-row">
+      <input type="text" class="retouche-input" id="ri-${blockId}" placeholder="Ex: plus percutant, plus court, ajoute de l'urgence, version darija...">
+      <button class="btn btn-primary" onclick="doRetouche('${blockId}',\`${(texteActuel||'').replace(/`/g,'\\`').replace(/\n/g,'\\n')}\`,\`${(zone||'').replace(/`/g,'\\`')}\`,\`${(contexte||'').replace(/`/g,'\\`')}\`)">→</button>
+    </div>`;
+  block.appendChild(panel);
+  panel.querySelector('.retouche-input').focus();
+}
+async function doRetouche(blockId,texteActuel,zone,contexte){
+  const input=document.getElementById('ri-'+blockId);
+  const instruction=input?.value?.trim();
+  if(!instruction){alert('Décris ce que tu veux changer !');return;}
+  const block=document.getElementById(blockId);
+  const panel=block?.querySelector('.retouche-panel');
+  if(panel) panel.innerHTML='<div class="loading-state" style="padding:12px"><div class="loader" style="width:20px;height:20px;margin:0 0 8px"></div><div style="font-size:11px;color:var(--txt3)">Régénération...</div></div>';
+  try{
+    const raw=await callAPI(`Tu dois retoucher ce texte LegalForce.
+TEXTE ACTUEL (zone: ${zone}):
+"${texteActuel}"
+CONTEXTE: ${contexte||'Post réseaux sociaux LegalForce — plateforme: '+state.plat}
+INSTRUCTION: ${instruction}
+Génère UNIQUEMENT le nouveau texte — sans explication, sans guillemets, juste le texte final parfait.`,
+    [],600);
+    const txtEl=block?.querySelector('.rblock-text');
+    if(txtEl) txtEl.innerHTML=raw.replace(/\n/g,'<br>');
+    const copyBtn=block?.querySelector('.btn-icon-sm');
+    if(copyBtn) copyBtn.setAttribute('onclick',`cp(this,\`${raw.replace(/`/g,'\\`').replace(/\n/g,'\\n')}\`)`);
+    block?.querySelector('.retouche-panel')?.remove();
+    const head=block?.querySelector('.rblock-head');
+    if(head&&!head.querySelector('.retouche-badge')) head.insertAdjacentHTML('beforeend','<span style="font-size:8px;background:rgba(74,222,128,0.15);color:var(--g);border-radius:4px;padding:2px 6px;font-family:var(--font-display);font-weight:800">RETOUCHÉ</span>');
+  }catch(e){
+    if(panel) panel.innerHTML=`<div style="font-size:11px;color:var(--r);padding:8px">Erreur: ${e.message}</div>`;
+  }
+}
+
+// ──────────────────────────────────────────
+// BUILD RESULT BLOCK
+// ──────────────────────────────────────────
+function buildBlock({id,label,role,text,tip,plat,isHero,isCoherent,isCaption,labelClass}){
+  const esc=(s='')=>s.replace(/`/g,'\\`').replace(/\n/g,'\\n');
+  const cls=isHero?'hero':isCoherent?'coherent':isCaption?'caption':'';
+  const lblCls=labelClass||'';
+  return `<div class="rblock ${cls}" id="${id}">
+    <div class="rblock-head">
+      <div>
+        <div class="rblock-label ${lblCls}">${label}</div>
+        ${role?`<div class="rblock-role">${role}</div>`:''}
+      </div>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="btn-icon-sm" title="Retoucher" onclick="showRetouche('${id}',\`${esc(text)}\`,\`${esc(label)}\`,\`Plateforme: ${plat||state.plat}\`)">✏️</button>
+        <button class="btn-icon-sm" onclick="cp(this,\`${esc(text)}\`)">Copier</button>
+      </div>
+    </div>
+    <div class="rblock-text">${(text||'').replace(/\n/g,'<br>')}</div>
+    ${tip?`<div class="rblock-tip" style="display:flex;align-items:flex-start;gap:5px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ${tip}</div>`:''}
+    ${isHero?charBar(text,plat||state.plat):''}
+  </div>`;
+}
+
+// ──────────────────────────────────────────
+// ANALYSE
+// ──────────────────────────────────────────
+async function doAnalyse(){
+  if(!state.slides.length) return;
+  const btn=document.getElementById('btn-analyse');
+  btn.disabled=true;
+  const isCarousel=state.slides.length>1;
+  const customSubj=document.getElementById('custom-subject')?.value?.trim();
+  const struct=document.getElementById('struct-sel')?.value;
+  const subjectNote=customSubj?`\nSujet spécifique demandé: ${customSubj}`:(state.selectedSubject?`\nSujet: ${state.selectedSubject}`:'');
+  const darijaNote=state.darijaMode?' Inclus une version darija naturelle pour chaque texte important.':'';
+  showLoading('out-analyse',isCarousel);
+  try{
+    if(isCarousel){
+      const prompt=`Je t'envoie ${state.slides.length} images formant un CARROUSEL (slide 1 = ${state.slides.length>2?'couverture/accroche':'slide principale'}, slides ${state.slides.length>2?'intermédiaires = développement, ':''} dernière = CTA/conclusion).
+${subjectNote}
+Objectif: ${state.obj} | Plateforme: ${state.plat} | Structure: ${struct==='general'?'Toutes structures LegalForce':struct.toUpperCase()}${darijaNote}
+
+MISSION CRITIQUE — CARROUSEL COHÉRENT:
+1. Analyse TOUTES les slides ENSEMBLE avant d'écrire quoi que ce soit
+2. Comprends la structure narrative globale : quel est le fil conducteur ?
+3. Chaque slide doit s'enchaîner naturellement avec la suivante
+4. Slide 1 : hook ultra-fort pour stopper le scroll (c'est la plus importante)
+5. Slides intermédiaires : valeur éducative ou narrative progressive
+6. Dernière slide : CTA fort avec les informations de contact LegalForce
+7. RESPECTE la longueur approximative de chaque texte original
+8. Applique les frameworks copywriting appropriés à l'objectif ${state.obj.toUpperCase()}
+9. Niveau d'excellence requis : dépasse les meilleurs posts des top créateurs business marocains
+
+RÉPONDS UNIQUEMENT AVEC CE JSON — AUCUN TEXTE AVANT NI APRÈS:
+{"sujet_detecte":"sujet","structure_narrative":"fil narratif","hashtags_specifiques":["#tag1"],"caption":"caption ${state.plat}","slides":[{"slide_num":1,"role":"hook","contexte_narratif":"rôle","textes":[{"zone":"zone","texte":"texte réécrit","tip":"conseil"}]}]}`;
+      const raw=await callAPI(prompt,state.slides,3000);
+      hideLoading();
+      const p=parseJSON(raw);
+      if(p?.slides) renderCarouselResults(p);
+      else document.getElementById('out-analyse').innerHTML=`<div class="rblock"><div class="rblock-text">${raw.replace(/\n/g,'<br>')}</div></div>`;
+      saveHist('Carrousel '+state.slides.length+'p',p?.sujet_detecte||customSubj||'',state.plat,state.obj);
+    } else {
+      const prompt=`Analyse cette image template et identifie TOUS les textes visibles (titre principal, sous-titre, corps, CTA, accroche, hashtags, chiffres, slogans, texte bas...).
+${subjectNote}
+Objectif: ${state.obj} | Plateforme: ${state.plat} | Structure: ${struct==='general'?'Toutes structures LegalForce':struct.toUpperCase()}${darijaNote}
+
+MISSION EXPERT:
+1. Identifie CHAQUE zone de texte avec son rôle précis dans le template
+2. Réécris chaque texte en RESPECTANT la longueur approximative de l'original
+3. Applique le framework copywriting ${state.obj.toUpperCase()} pour cette plateforme
+4. Le hook principal doit être impossible à ignorer
+5. Chaque texte doit servir l'objectif final : ${OBJ_EXPLAIN[state.obj]?.replace(/<[^>]+>/g,'')||state.obj}
+6. Niveau d'excellence : top 1% des créateurs business sur ${state.plat}
+
+RÉPONDS UNIQUEMENT AVEC CE JSON — AUCUN TEXTE AVANT NI APRÈS:
+{"textes":[{"zone":"nom zone","role":"rôle","texte":"texte réécrit LegalForce","tip":"conseil"}],"caption":"caption complète ${state.plat}","hashtags_specifiques":["#tag1"],"hook_score":85}`;
+      const raw=await callAPI(prompt,[state.slides[0]],2000);
+      hideLoading();
+      const p=parseJSON(raw);
+      if(p?.textes) renderSingleResults(p);
+      else document.getElementById('out-analyse').innerHTML=`<div class="rblock"><div class="rblock-text">${raw.replace(/\n/g,'<br>')}</div></div>`;
+      saveHist('Image',p?.textes?.[0]?.texte||customSubj||'',state.plat,state.obj);
+    }
+  }catch(e){
+    hideLoading();
+    document.getElementById('out-analyse').innerHTML=`<div class="err-box"><strong>Erreur :</strong> ${e.message}<br><br>Ce fichier doit être ouvert via une URL HTTPS.<br>Glisse-le sur <strong>netlify.com/drop</strong> → URL permanente en 30 secondes.</div>`;
+  }
+  btn.disabled=false;
+}
+
+function renderCarouselResults(p){
+  const out=document.getElementById('out-analyse');
+  let html=`<div class="result-wrap">
+    <div class="result-header">
+      <div class="result-title">Résultats — ${state.slides.length} slides</div>
+      <div class="result-actions">
+        <button class="btn-icon-sm" onclick="cpAll('out-analyse')">Tout copier</button>
+      </div>
+    </div>
+    <div class="rblock coherent">
+      <div class="rblock-head"><div><div class="rblock-label green">Carrousel cohérent</div><div class="rblock-role">${p.structure_narrative||''}</div></div></div>
+      <div class="rblock-text" style="font-size:11px;color:var(--txt3)">${p.sujet_detecte||''}</div>
+    </div>`;
+
+  p.slides?.forEach((slide,si)=>{
+    const thumb=state.slides[si]?.src||'';
+    const bodyId=`sr-body-${si}`;
+    const headId=`sr-head-${si}`;
+    html+=`<div class="slide-result">
+      <div class="slide-result-header" id="${headId}" onclick="toggleSlide('${headId}','${bodyId}')">
+        ${thumb?`<img class="slide-result-thumb" src="${thumb}">`:''}
+        <div class="slide-result-info">
+          <div class="slide-result-title">Slide ${slide.slide_num} — ${slide.role||''}</div>
+          <div class="slide-result-sub">${slide.contexte_narratif||''} · ${slide.textes?.length||0} zone(s)</div>
+        </div>
+        <span class="slide-chevron">›</span>
+      </div>
+      <div class="slide-result-body ${si===0?'open':''}" id="${bodyId}">
+        ${(slide.textes||[]).map((t,ti)=>{
+          const bid=`rb-${si}-${ti}-${Date.now()}`;
+          return buildBlock({id:bid,label:t.zone||'',role:t.role||'',text:t.texte||'',tip:t.tip||'',plat:state.plat,isHero:ti===0&&si===0});
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  if(p.caption){
+    const capId='rb-cap-'+Date.now();
+    html+=buildBlock({id:capId,label:`Caption ${state.plat}`,role:'Optimisée pour l\'algorithme',text:p.caption,plat:state.plat,isCaption:true,labelClass:'gold'});
+  }
+  html+=renderHashtags(p.hashtags_specifiques);
+  html+='</div>';
+  out.innerHTML=html;
+  const firstBody=out.querySelector('.slide-result-body.open');
+  if(firstBody) firstBody.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function renderSingleResults(p){
+  const out=document.getElementById('out-analyse');
+  // Compatibilité : p peut avoir textes[] ou slides[0].textes[]
+  const textes = p.textes || p.slides?.[0]?.textes || [];
+  const showDarija = state.darijaMode;
+  let html=`<div class="result-wrap"><div class="result-header"><div class="result-title">Résultats</div><div class="result-actions"><button class="btn-icon-sm" onclick="cpAll('out-analyse')">Tout copier</button></div></div>`;
+  textes.forEach((t,i)=>{
+    const id='rb-s-'+i+'-'+Date.now();
+    const texteAffiche = t.texte||t.texte_reecrit||'';
+    const texteD = t.texte_darija||'';
+    html+=buildBlock({id,label:t.zone||'',role:t.role||'',text:texteAffiche,tip:t.tip||'',plat:state.plat,isHero:i===0});
+    // Afficher version darija si disponible et mode darija activé
+    if(showDarija && texteD){
+      const did='rb-d-'+i+'-'+Date.now();
+      html+=buildBlock({id:did,label:(t.zone||'')+'— دارجة',role:'Version darija',text:texteD,plat:state.plat,isHero:false,labelClass:'gold'});
+    }
+  });
+  if(p.caption){
+    const capId='rb-cap-'+Date.now();
+    html+=buildBlock({id:capId,label:`Caption ${state.plat}`,role:'Optimisée pour l\'algorithme',text:p.caption,plat:state.plat,isCaption:true,labelClass:'gold'});
+  }
+  // Score hook
+  const hs=p.hook_score||hookScore(p.textes?.[0]?.texte||'');
+  const hsc=hs>=80?'var(--g)':hs>=60?'var(--gld)':'var(--r)';
+  html+=`<div class="score-bar"><span class="score-label">Score hook</span><div class="score-track"><div class="score-fill" style="width:${hs}%;background:${hsc}"></div></div><span class="score-val" style="color:${hsc}">${hs}/100</span></div>`;
+  html+=renderHashtags(p.hashtags_specifiques);
+  html+='</div>';
+  out.innerHTML=html;
+}
+
+function toggleSlide(headId,bodyId){
+  const head=document.getElementById(headId);
+  const body=document.getElementById(bodyId);
+  if(!head||!body) return;
+  head.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ──────────────────────────────────────────
+// SUJETS
+// ──────────────────────────────────────────
+// ──────────────────────────────────────────
+// MÉMOIRE SUJETS — évite toute répétition
+// ──────────────────────────────────────────
+function getUsedSubjects(){
+  return JSON.parse(localStorage.getItem('lf_used_subjects') || '[]');
+}
+function saveUsedSubject(titre, angle){
+  const used = getUsedSubjects();
+  used.unshift({titre: titre.substring(0,80), angle: (angle||'').substring(0,60), date: new Date().toLocaleDateString('fr-FR')});
+  // Garder les 200 derniers sujets en mémoire
+  if(used.length > 200) used.splice(200);
+  localStorage.setItem('lf_used_subjects', JSON.stringify(used));
+}
+function clearUsedSubjects(){
+  localStorage.removeItem('lf_used_subjects');
+  alert('Mémoire des sujets effacée — les prochaines générations repartent de zéro.');
+}
+function getUsedSubjectsPromptBlock(){
+  const used = getUsedSubjects();
+  if(!used.length) return '';
+  // Envoyer les 40 derniers angles utilisés dans le prompt
+  const recent = used.slice(0,40).map(s => `- "${s.titre}" (angle: ${s.angle||'?'})`).join('\n');
+  return `\n\nSUJETS DÉJÀ UTILISÉS — NE PAS RÉPÉTER CES ANGLES:\n${recent}\nGénère des angles TOTALEMENT DIFFÉRENTS de ceux ci-dessus.`;
+}
+
+async function loadSubjects(){
+  const btn=document.getElementById('btn-subjects');
+  const grid=document.getElementById('subjects-grid');
+  const loading=document.getElementById('subjects-loading');
+  btn.disabled=true; grid.style.display='none'; loading.style.display='block';
+  document.getElementById('sel-subject-info').classList.remove('show');
+  state.selectedSubject=null;
+
+  // Seed aléatoire = variété garantie à chaque génération
+  const SEEDS=['angle chiffres économiques choc','angle émotionnel identité MRE','angle comparatif avant-après','angle mythes vs réalité','angle opportunité manquée','angle témoignage vécu','angle urgence timing marché','angle éducatif pratique surprise','angle provocateur contre-intuitif','angle local Casablanca Rabat','angle international diaspora','angle jeune entrepreneur Gen Z'];
+  const seed=SEEDS[Math.floor(Math.random()*SEEDS.length)];
+  const now=new Date();
+  const month=now.toLocaleString('fr-FR',{month:'long'});
+  const year=now.getFullYear();
+  const ACTU=['Boom IA dans les PME 2025-2026','Coupe du Monde 2030 Maroc — opportunités business','Record MRE: 115 milliards DH transférés au Maroc en 2024','Digitalisation services publics marocains accélérée','Casablanca Finance City hub financier africain N°1','Boom e-commerce Maroc +35% annuel','Gen Z marocaine: 65% veulent entreprendre','Charte investissement 2023 avantages fiscaux nouveaux','Investissements Golfe au Maroc record 2025','Maroc porte entrée Afrique subsaharienne','CAN 2025 — visibilité internationale record','Hausse taux intérêt Europe — MRE diversifient vers Maroc','Startup ecosystem Maroc en forte croissance','Plan Génération Green — agriculture digitale Maroc'];
+  const actu=ACTU.sort(()=>Math.random()-0.5).slice(0,5).join(' | ');
+  
+  // Récupérer la mémoire des sujets déjà utilisés
+  const memoryBlock = getUsedSubjectsPromptBlock();
+  const usedCount = getUsedSubjects().length;
+
+  try{
+    const prompt=`Date: ${month} ${year}. Style de cette génération: "${seed}".
+Actualité à exploiter: ${actu}${memoryBlock}
+
+Génère 20 sujets de posts TOTALEMENT ORIGINAUX pour LegalForce.
+Le style "${seed}" doit donner un angle distinct à TOUTE cette batch.
+
+RÉPARTITION OBLIGATOIRE: 5 TOFU + 5 MOFU + 5 BOFU + 5 MRE
+
+TOFU: Audience froide — éduquer, surprendre, PAS de vente. Chiffre inattendu, réalité peu connue.
+MOFU: Audience tiède — lever objections, comparer, démontrer la valeur. Ex: "vs fiduciaire classique".
+BOFU: Audience chaude — urgence, offre, prix, CTA implicite. Ex: "Commence maintenant".
+MRE: Diaspora France/Belgique/Emirats. Réalité vécue (vivre à l'étranger + vouloir créer au bled). Zéro déplacement.
+
+QUALITÉ: Chaque titre = accroche qui crée tension ou curiosité immédiate. MAX 65 chars.
+INTERDIT ABSOLU: Angles répétés, dates antérieures à ${year}, titres génériques.
+
+JSON uniquement:
+{"subjects":[{"type":"tofu","titre":"titre précis max 65 chars","angle":"angle unique et spécifique"}]}`;
+    const raw=await callAPI(prompt,[],2500);
+    const p=parseJSON(raw);
+    loading.style.display='none';
+    if(p?.subjects){
+      grid.style.display='grid';
+      grid.innerHTML=p.subjects.map((s,i)=>`
+        <div class="subject-card" onclick="selectSubject(this,${i},\`${(s.titre||'').replace(/`/g,'\\`')}\`,\`${(s.angle||'').replace(/`/g,'\\`')}\`)">
+          <span class="s-type ${s.type||'tofu'}">${(s.type||'TOFU').toUpperCase()}</span>
+          <div class="subject-title">${s.titre||''}</div>
+          <div style="font-size:9px;color:var(--txt3);margin-top:4px;line-height:1.3">${s.angle||''}</div>
+          <div class="s-check">✓</div>
+        </div>`).join('');
+      // Afficher la stat mémoire
+      const memStat = document.getElementById('subjects-mem-stat');
+      if(memStat) memStat.textContent = usedCount > 0 ? `${usedCount} sujets en mémoire — angles exclus automatiquement` : '1ère génération';
+    } else {
+      grid.style.display='block';
+      grid.innerHTML=`<div class="err-box" style="grid-column:1/-1">Génération impossible. Réessaie.</div>`;
+    }
+  }catch(e){
+    loading.style.display='none';
+    grid.style.display='block';
+    grid.innerHTML=`<div class="err-box" style="grid-column:1/-1">${e.message}</div>`;
+  }
+  btn.disabled=false;
+}
+function selectSubject(el,idx,titre,angle){
+  document.querySelectorAll('.subject-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selectedSubject=titre;
+  state.selectedAngle=angle||'';
+  document.getElementById('sel-subject-txt').textContent=titre;
+  document.getElementById('sel-subject-info').classList.add('show');
+}
+function goAnalyseWithSubject(){
+  if(state.selectedSubject){
+    document.getElementById('custom-subject').value=state.selectedSubject;
+    // Mémoriser ce sujet pour éviter la répétition future
+    saveUsedSubject(state.selectedSubject, state.selectedAngle||'');
+  }
+  showPage('analyse');
+}
+function useManualSubject(){
+  const s=document.getElementById('manual-subject')?.value?.trim();
+  if(!s){alert('Indique un sujet !');return;}
+  state.selectedSubject=s;
+  document.getElementById('custom-subject').value=s;
+  showPage('analyse');
+}
+
+// ──────────────────────────────────────────
+// CHAT IA
+// ──────────────────────────────────────────
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value='';input.style.height='44px';
+  const messages=document.getElementById('chat-messages');
+  state.chatHistory.push({role:'user',content:msg});
+  messages.innerHTML+=`<div class="msg user">${msg.replace(/\n/g,'<br>')}</div>`;
+  const loadEl=document.createElement('div');
+  loadEl.className='msg ai thinking';loadEl.id='chat-loading';loadEl.textContent='En train de réfléchir...';
+  messages.appendChild(loadEl);messages.scrollTop=messages.scrollHeight;
+  try{
+    const apiKey=getAPIKey();
+    if(!apiKey){showAPIKeyModal();throw new Error('Clé API manquante');}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1500,
+        system:buildSYS()+'\n\nTu es un assistant conversationnel expert. Réponds directement avec un contenu de qualité professionnelle. Pour du contenu créatif, génère-le directement avec les hashtags LegalForce inclus. Niveau exigé : top copywriter marocain spécialisé en création d\'entreprise.',
+        messages:state.chatHistory
+      })
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message);}
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'';
+    state.chatHistory.push({role:'assistant',content:reply});
+    document.getElementById('chat-loading')?.remove();
+    messages.innerHTML+=`<div class="msg ai">${reply.replace(/\n/g,'<br>')}</div>`;
+    messages.scrollTop=messages.scrollHeight;
+    saveHist('Chat',msg,state.plat,state.obj);
+  }catch(e){
+    document.getElementById('chat-loading')?.remove();
+    messages.innerHTML+=`<div class="msg ai thinking">Erreur: ${e.message}. Assure-toi d'ouvrir ce fichier via une URL HTTPS (netlify.com/drop).</div>`;
+  }
+}
+
+// ──────────────────────────────────────────
+// SUJETS IA (batch)
+// ──────────────────────────────────────────
+
+// ──────────────────────────────────────────
+// SETTINGS
+// ──────────────────────────────────────────
+let _autoSaveTimer=null;
+function saveSettings(showFeedback=true){
+  const fields=['brand','slogan','positioning','site','wa','email','price','delai',
+    'p-sarl-s','p-sarl-b','p-sarl-p','p-sas-s','p-sas-b','p-sas-p',
+    'cible1','cible2','cible3','ton','arg1','arg2','arg3','arg4','stat',
+    'c1','c2','c3','hashtags','extra-hashtags'];
+  const data={};
+  fields.forEach(k=>{const el=document.getElementById('set-'+k);if(el) data[k]=el.value;});
+  const falEl=document.getElementById('set-fal-key');
+  if(falEl) data.falKey=falEl.value;
+  // Inclure la clé API dans la sauvegarde aussi
+  const apiKeyEl=document.getElementById('settings-api-key');
+  if(apiKeyEl&&apiKeyEl.value.trim().startsWith('sk-')){
+    localStorage.setItem('lf_api_key', apiKeyEl.value.trim());
+  }
+  localStorage.setItem('lf_db',JSON.stringify(data));
+  // Feedback visuel
+  if(showFeedback){
+    const indicator=document.getElementById('autosave-indicator');
+    if(indicator){indicator.style.opacity='1';setTimeout(()=>indicator.style.opacity='0',1500);}
+  }
+}
+function autoSave(){
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer=setTimeout(()=>saveSettings(true),600);
+}
+function loadSettings(){
+  const d=getDB();
+  const map={
+    'set-brand':d.brand,'set-slogan':d.slogan,'set-positioning':d.positioning,
+    'set-site':d.site,'set-wa':d.wa,'set-email':d.email,
+    'set-price':d.price,'set-delai':d.delai,
+    'set-p-sarl-s':d['p-sarl-s'],'set-p-sarl-b':d['p-sarl-b'],'set-p-sarl-p':d['p-sarl-p'],
+    'set-p-sas-s':d['p-sas-s'],'set-p-sas-b':d['p-sas-b'],'set-p-sas-p':d['p-sas-p'],
+    'set-cible1':d.cible1,'set-cible2':d.cible2,'set-cible3':d.cible3,
+    'set-ton':d.ton,'set-arg1':d.arg1,'set-arg2':d.arg2,'set-arg3':d.arg3,'set-arg4':d.arg4,'set-stat':d.stat,
+    'set-c1':d.c1,'set-c2':d.c2,'set-c3':d.c3,
+    'set-hashtags':d.hashtags,'set-extra-hashtags':d.extraHashtags,'set-fal-key':d.falKey||''
+  };
+  Object.entries(map).forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val!==undefined) el.value=val;});
+}
+function resetSettings(){
+  if(!confirm('Réinitialiser ?')) return;
+  localStorage.removeItem('lf_db');loadSettings();
+}
+
+// ──────────────────────────────────────────
+// DB FILE UPLOAD
+// ──────────────────────────────────────────
+const EXTRACT_PROMPT=`Analyse ce document business et extrait les informations pertinentes pour LegalForce.
+Retourne UNIQUEMENT un JSON avec les champs présents dans le document:
+{"brand":"","slogan":"","prix":"","arguments":[],"cibles":[],"ton":"","stats":"","hashtags":"","autres":""}
+Si un champ n'est pas dans le document, ne l'inclus pas.`;
+
+async function handleDBFile(e){
+  const file=e.target.files?.[0];if(!file) return;
+  document.getElementById('db-file-loading').style.display='block';
+  document.getElementById('db-file-result').innerHTML='';
+  try{
+    let content='';
+    if(file.type==='application/pdf'){
+      const b64=await new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result.split(',')[1]);r.readAsDataURL(file);});
+      const dbApiKey=getAPIKey();
+      if(!dbApiKey){showAPIKeyModal();throw new Error('Clé API manquante');}
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':dbApiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:'Tu extrais des informations business depuis des documents.',messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:EXTRACT_PROMPT}]}]})});
+      const d=await res.json();content=d.content?.[0]?.text||'';
+    } else {
+      content=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsText(file);});
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:'Tu extrais des informations business depuis des documents.',messages:[{role:'user',content:`${EXTRACT_PROMPT}\n\nDOCUMENT:\n${content.substring(0,10000)}`}]})});
+      const d=await res.json();content=d.content?.[0]?.text||'';
+    }
+    document.getElementById('db-file-loading').style.display='none';
+    const p=parseJSON(content);
+    if(p) renderExtracted(p,file.name);
+    else document.getElementById('db-file-result').innerHTML=`<div class="rblock"><div class="rblock-text" style="font-size:11px">${content.substring(0,500)}</div></div>`;
+  }catch(err){
+    document.getElementById('db-file-loading').style.display='none';
+    document.getElementById('db-file-result').innerHTML=`<div class="err-box">${err.message}</div>`;
+  }
+  e.target.value='';
+}
+let _lastExtracted={};
+function renderExtracted(data,filename){
+  _lastExtracted=data;
+  const container=document.getElementById('db-file-result');
+  const fieldMap={brand:'Nom marque',slogan:'Slogan',ton:'Ton de voix',stats:'Stats',hashtags:'Hashtags'};
+  let html=`<div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:11px;color:rgba(74,222,128,0.8);font-family:var(--font-display);font-weight:700"><span style="display:inline-flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Document analysé</span> : ${filename}</div>`;
+  Object.entries(data).forEach(([k,v])=>{
+    if(!v||k==='autres') return;
+    const label=fieldMap[k]||k;
+    const valStr=Array.isArray(v)?v.join(' · '):String(v);
+    html+=`<div class="extracted-field"><div><div class="ef-label">${label}</div><div class="ef-val">${valStr.substring(0,120)}</div></div><button class="btn-icon-sm" onclick="applyField('${k}',\`${valStr.replace(/`/g,'\\`')}\`)">Appliquer</button></div>`;
+  });
+  html+=`<button class="btn btn-primary" style="margin-top:8px" onclick="applyAllExtracted()">Tout appliquer →</button>`;
+  container.innerHTML=html;
+}
+function applyField(key,val){
+  const m={brand:'set-brand',slogan:'set-slogan',ton:'set-ton',stats:'set-stat',hashtags:'set-hashtags'};
+  const id=m[key];
+  if(id){const el=document.getElementById(id);if(el){el.value=val;el.style.borderColor='var(--g)';setTimeout(()=>el.style.borderColor='',2000);}}
+  if(key==='arguments'&&Array.isArray(val)){val.forEach((v,i)=>{const el=document.getElementById(`set-arg${i+1}`);if(el) el.value=v;});}
+  if(key==='cibles'&&Array.isArray(val)){val.forEach((v,i)=>{const el=document.getElementById(`set-cible${i+1}`);if(el) el.value=v;});}
+}
+function applyAllExtracted(){
+  Object.entries(_lastExtracted).forEach(([k,v])=>{if(v) applyField(k,Array.isArray(v)?v.join(' · '):String(v));});
+  saveSettings();
+  const btn=event?.target;
+  if(btn){btn.textContent='✓ Appliqué !';setTimeout(()=>btn.textContent='Tout appliquer →',2000);}
+}
+
+// ──────────────────────────────────────────
+// IMAGE GENERATION
+// ──────────────────────────────────────────
+async function generateImage(){
+  const key=document.getElementById('set-fal-key')?.value?.trim();
+  if(!key){alert('Entre ta clé API fal.ai d\'abord.\n\nInscription gratuite sur fal.ai → 10$ offerts (~3000 images)');return;}
+  const promptTxt=document.getElementById('img-prompt')?.value?.trim();
+  if(!promptTxt){alert('Décris l\'image !');return;}
+  const style=state.imgStyle||'corporate';
+  const ratio=state.imgRatio||'1:1';
+  const ratioMap={'1:1':{w:1024,h:1024},'9:16':{w:768,h:1344},'16:9':{w:1344,h:768},'4:5':{w:896,h:1120}};
+  const dims=ratioMap[ratio]||ratioMap['1:1'];
+  const styleMap={corporate:'professional corporate photography, business setting, modern office, clean',lifestyle:'lifestyle photography, authentic candid, warm natural light',minimal:'minimalist design, clean background, simple geometric',flat:'flat design illustration, vector style, bold colors'};
+  const fullPrompt=`${promptTxt}, ${styleMap[style]||styleMap.corporate}, deep navy blue and violet brand colors, no text, no watermark, ultra high quality, 8k`;
+  const btn=document.getElementById('btn-gen-img');
+  btn.disabled=true;
+  document.getElementById('img-gen-loading').style.display='block';
+  document.getElementById('img-gen-result').style.display='none';
+  let ti=0;
+  const steps=['Envoi à Flux Pro...','Génération (~8s)...','Traitement...','Finalisation...'];
+  const prog=setInterval(()=>{ti=(ti+1)%steps.length;const el=document.getElementById('img-gen-sub');if(el) el.textContent=steps[ti];},2000);
+  try{
+    const res=await fetch('https://fal.run/fal-ai/flux/dev',{
+      method:'POST',headers:{'Authorization':`Key ${key}`,'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:fullPrompt,image_size:{width:dims.w,height:dims.h},num_inference_steps:28,guidance_scale:3.5,num_images:1,enable_safety_checker:true})
+    });
+    clearInterval(prog);
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.detail||err.message||`Erreur fal.ai ${res.status}`);}
+    const data=await res.json();
+    const imgUrl=data.images?.[0]?.url;
+    if(!imgUrl) throw new Error('Aucune image retournée');
+    document.getElementById('img-gen-loading').style.display='none';
+    document.getElementById('img-gen-result').style.display='block';
+    const preview=document.getElementById('img-gen-preview');
+    preview.src=imgUrl;preview.dataset.url=imgUrl;
+    const s=JSON.parse(localStorage.getItem('lf_db')||'{}');s.falKey=key;localStorage.setItem('lf_db',JSON.stringify(s));
+    saveHist('Image IA',promptTxt,'fal.ai',style);
+  }catch(e){
+    clearInterval(prog);
+    document.getElementById('img-gen-loading').style.display='none';
+    document.getElementById('img-gen-result').style.display='block';
+    document.getElementById('img-gen-result').innerHTML=`<div class="err-box"><strong>Erreur :</strong> ${e.message}<br><br>Vérifie ta clé fal.ai et que ce fichier est ouvert via HTTPS.</div>`;
+  }
+  btn.disabled=false;
+}
+function downloadImg(){
+  const img=document.getElementById('img-gen-preview');
+  if(!img?.src) return;
+  const a=document.createElement('a');a.href=img.dataset.url||img.src;a.download=`legalforce-${Date.now()}.jpg`;a.target='_blank';a.click();
+}
+function useImg(){
+  alert('Image copiée — intègre-la dans ton template Canva puis upload le template dans l\'onglet Analyser.');
+  showPage('analyse');
+}
+
+// ──────────────────────────────────────────
+// HISTORY
+// ──────────────────────────────────────────
+function saveHist(type,preview,plat,goal){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  h.unshift({type,preview:(preview||'').substring(0,200),plat,goal,date:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  if(h.length>100) h.pop();
+  localStorage.setItem('lf_hist',JSON.stringify(h));
+  updateHistBadge(h.length);
+}
+function updateHistBadge(n){
+  const badge=document.getElementById('bnav-badge');
+  const navBadge=document.getElementById('hist-badge-nav');
+  if(badge){badge.textContent=n;badge.classList.toggle('show',n>0);}
+  if(navBadge){navBadge.textContent=n;navBadge.style.display=n>0?'inline':'none';}
+  const hStat=document.getElementById('h-stat');
+  if(hStat&&n>0) hStat.innerHTML=`<span>${n}</span> générations`;
+}
+function renderHist(){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  const info=document.getElementById('hist-info');
+  if(info) info.textContent=`${h.length} génération${h.length!==1?'s':''}`;
+  updateHistBadge(h.length);
+  const list=document.getElementById('hist-list');if(!list) return;
+  if(!h.length){list.innerHTML='<div class="empty-state"><div class="empty-icon" style="opacity:.35"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="empty-title">Aucune génération pour l\'instant</div></div>';return;}
+  list.innerHTML=h.map(e=>`<div class="hist-item">
+    <div class="hist-meta"><span class="hist-type">${e.type}</span><span class="hist-date">${e.date}</span></div>
+    <div class="hist-preview">${e.preview||'—'}</div>
+    <div class="hist-tags">${e.plat?`<span class="hist-tag">${e.plat}</span>`:''}<span class="hist-tag">${e.goal||''}</span></div>
+  </div>`).join('');
+}
+function clearHist(){if(!confirm('Vider tout l\'historique ?')) return;localStorage.removeItem('lf_hist');renderHist();}
+function exportCSV(){
+  const h=JSON.parse(localStorage.getItem('lf_hist')||'[]');
+  if(!h.length){alert('Aucune génération');return;}
+  const csv='Type,Date,Plateforme,Objectif,Aperçu\n'+h.map(e=>`"${e.type}","${e.date}","${e.plat||''}","${e.goal||''}","${(e.preview||'').replace(/"/g,"'")}"`).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='legalforce-studio.csv';a.click();
+}
+
+// ──────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────
+// ──────────────────────────────────────────
+// API KEY SETTINGS HELPERS
+// ──────────────────────────────────────────
+function saveAPIKeyFromSettings(){
+  const input = document.getElementById('settings-api-key');
+  const key = input?.value?.trim();
+  if(!key){ showStatus('Clé vide','error'); return; }
+  if(!key.startsWith('sk-')){ showStatus('Format invalide — doit commencer par sk-','error'); return; }
+  saveAPIKey(key);
+  showStatus('Clé enregistrée','success');
+  const headerBtn = document.getElementById('header-api-btn');
+  if(headerBtn) headerBtn.style.display = 'none';
+}
+function updateAPIKeyStatus(){
+  const input = document.getElementById('settings-api-key');
+  const status = document.getElementById('api-key-settings-status');
+  const key = input?.value?.trim();
+  if(!status) return;
+  if(!key){ status.style.display='none'; return; }
+  status.style.display = 'block';
+  if(key.startsWith('sk-ant-')){
+    status.innerHTML = '<span style="color:var(--g)">✓ Format correct</span>';
+  } else if(key.startsWith('sk-')){
+    status.innerHTML = '<span style="color:var(--gld)">Format Claude.ai — utilise plutôt une clé API console</span>';
+  } else {
+    status.innerHTML = '<span style="color:var(--r)">Format invalide</span>';
+  }
+}
+function showStatus(msg, type){
+  const el = document.getElementById('api-key-settings-status');
+  if(!el) return;
+  el.style.display = 'block';
+  el.innerHTML = `<span style="color:${type==='success'?'var(--g)':'var(--r)'}">${msg}</span>`;
+  setTimeout(()=>{ if(el) el.style.display='none'; }, 3000);
+}
+async function testAPIKey(){
+  const input = document.getElementById('settings-api-key');
+  const key = input?.value?.trim() || getAPIKey();
+  if(!key){ showStatus('Aucune clé à tester','error'); return; }
+  showStatus('Test en cours...','success');
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'Hi'}]})
+    });
+    if(res.ok){ showStatus('✓ Clé valide — connexion réussie','success'); saveAPIKey(key); }
+    else { const e=await res.json().catch(()=>({})); showStatus(e.error?.message||`Erreur ${res.status}`,'error'); }
+  }catch(e){ showStatus(e.message,'error'); }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadSettings();
+  renderHist();
+  // Restore API key
+  const apiKey = getAPIKey();
+  if(apiKey){ const el=document.getElementById('settings-api-key'); if(el) el.value=apiKey; }
+  else {
+    // Pas de clé = afficher le bouton lock dans le header
+    const headerBtn = document.getElementById('header-api-btn');
+    if(headerBtn) headerBtn.style.display = 'flex';
+  }
+  // Restore fal key
+  const saved=JSON.parse(localStorage.getItem('lf_db')||'{}');
+  if(saved.falKey){const el=document.getElementById('set-fal-key');if(el) el.value=saved.falKey;}
+  // Drag & drop setup
+  const dz=document.getElementById('dropzone');
+  if(dz){
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  }
+});
+</script>
+</body>
+</html>
